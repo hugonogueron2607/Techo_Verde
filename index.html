@@ -29,15 +29,15 @@
   </div>
 
   <script>
-    const csvUrl = "https://docs.google.com/spreadsheets/d/1cotJ7Goay6NluG2SfVCxx-rlfnDPdZB0_wO5ExIoG4s/gviz/tq?tqx=out:csv&sheet=Lecturas";
+    const csvUrl = "https://docs.google.com/spreadsheets/d/1cotJ7Goay6NluG2SFVCxx-rIfnDPdZB0_wO5ExloG4s/gviz/tq?tqx=out:csv&sheet=Lecturas";
 
     fetch(csvUrl)
       .then(response => response.text())
       .then(csv => {
         const rows = csv.trim().split("\n").map(row => row.split(","));
         const headers = rows[0];
-        const fechaIndex = headers.indexOf("Fecha y hora");
-        const s1Index = headers.indexOf("Sensor 1");
+        const fechaIndex = headers.indexOf("Timestamp");
+        const s1Index = headers.indexOf("S1");
 
         const etiquetas = [];
         const datos = [];
@@ -86,19 +86,3 @@
             scales: {
               x: {
                 title: { display: true, text: "Fecha y hora" }
-              },
-              y: {
-                title: { display: true, text: "Temperatura (°C)" },
-                beginAtZero: false
-              }
-            }
-          }
-        });
-      })
-      .catch(error => {
-        document.getElementById("graficaContainer").innerHTML = "<p>Error al cargar los datos.</p>";
-        console.error("Error al cargar el CSV:", error);
-      });
-  </script>
-</body>
-</html>
