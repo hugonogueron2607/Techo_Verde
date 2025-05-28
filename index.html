@@ -54,7 +54,7 @@
         thead.appendChild(headerRow);
 
         // Agregar filas (últimas 5 lecturas)
-        rows.slice(1).reverse().slice(0, 5).forEach(dataRow => {
+        rows.slice(1).reverse().slice(0, 50).forEach(dataRow => {
           const tr = document.createElement("tr");
           dataRow.forEach(cell => {
             const td = document.createElement("td");
