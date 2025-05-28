@@ -53,8 +53,8 @@
         });
         thead.appendChild(headerRow);
 
-        // Agregar filas (últimas 5 lecturas)
-        rows.slice(1).reverse().slice(0, 50).forEach(dataRow => {
+        // Agregar filas (últimas 20 lecturas)
+        rows.slice(1).reverse().slice(0, 20).forEach(dataRow => {
           const tr = document.createElement("tr");
           dataRow.forEach(cell => {
             const td = document.createElement("td");
