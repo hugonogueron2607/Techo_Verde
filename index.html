@@ -46,8 +46,12 @@
         const ultimas = rows.slice(1).reverse().slice(0, 20).reverse();
 
         ultimas.forEach(row => {
+          const valor = parseFloat(row[s1Index]);
+          console.log("Fila:", row);
+          console.log("Timestamp:", row[fechaIndex], "| S1:", row[s1Index], "→", valor);
           etiquetas.push(row[fechaIndex]);
-          datos.push(parseFloat(row[s1Index]));
+          datos.push(valor);
+
         });
 
         const ctx = document.getElementById("graficaSensor1").getContext("2d");
