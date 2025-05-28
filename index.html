@@ -86,3 +86,19 @@
             scales: {
               x: {
                 title: { display: true, text: "Fecha y hora" }
+              },
+              y: {
+                title: { display: true, text: "Temperatura (°C)" },
+                beginAtZero: false
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        document.getElementById("graficaContainer").innerHTML = "<p>Error al cargar los datos.</p>";
+        console.error("Error al cargar el CSV:", error);
+      });
+  </script>
+</body>
+</html>
