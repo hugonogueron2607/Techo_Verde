@@ -1,9 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from typing import Dict, List, Any
 import csv
 import requests
 from io import StringIO
+
+class DatoSensor(BaseModel):
+    timestamp:  str
+    valor:  str
+
+class SensorResponse(BaseModel):
+    sensor: str
+    datos:  List[DatoSensor]
 
 app = FastAPI()
 
@@ -32,8 +41,8 @@ def get_lecturas():
     return {"lecturas": data}
 
 # Ruta para obtener los datos de un sensor específico
-@app.get("/sensor/{sensor_id}")
-def get_sensor(sensor_id: str):
+@app.get("/sensor/{S1}", response_model=SensorResponse)
+def get_sensor(S1: str):
     response = requests.get(CSV_URL)
     if response.status_code != 200:
         return {"error": "No se pudo obtener el archivo CSV"}
@@ -42,9 +51,9 @@ def get_sensor(sensor_id: str):
     reader = csv.DictReader(StringIO(decoded))
     datos = []
     for row in reader:
-        if sensor_id in row:
+        if S1 in row:
             datos.append({
                 "timestamp": row["Timestamp"],
-                "valor": row[sensor_id]
+                "valor": row[S1]
             })
-    return {"sensor": sensor_id, "datos": datos}
+    return {"sensor": S1, "datos": datos}

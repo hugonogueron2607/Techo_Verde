@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gráfica Sensor 1 desde API</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+    }
+    #graficaContainer {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    canvas {
+      width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h2>Gráfica Sensor 1 - Datos desde API FastAPI</h2>
+  <div id="graficaContainer">
+    <canvas id="graficaSensor1"></canvas>
+  </div>
+
+  <script>
+    fetch("http://127.0.0.1:8000/sensor/S1")
+      .then(response => response.json())
+      .then(data => {
+        const etiquetas = data.datos.map(item => item.timestamp);
+        const valores = data.datos.map(item => parseFloat(item.valor));
+
+        const ctx = document.getElementById("graficaSensor1").getContext("2d");
+
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: etiquetas,
+            datasets: [{
+              label: "Temperatura (°C)",
+              data: valores,
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              fill: true,
+              tension: 0.3,
+              pointRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: "Últimas lecturas - Sensor 1"
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: "Fecha y hora" }
+              },
+              y: {
+                title: { display: true, text: "Temperatura (°C)" },
+                beginAtZero: false
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        console.error("Error al obtener datos del backend:", error);
+      });
+  </script>
+</body>
+</html>
