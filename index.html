@@ -46,9 +46,16 @@
     const API_URL = "https://techo-verde-api-2.onrender.com/sensor/S1";
 
     async function fetchData() {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      return data.datos.slice(-20);
+      console.log("Solicitando datos desde:", API_URL);
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        console.log("Datos recibidos:", data);
+        return data.datos.slice(-20);
+      } catch (error) {
+        console.error("❌ Error al obtener datos:", error);
+        return [];
+      }
     }
 
     function renderTable(data) {
