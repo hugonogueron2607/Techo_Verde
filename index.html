@@ -27,14 +27,17 @@
         flex: 1;
       }
     }
-    canvas {
-      max-width: 100%;
+    .chart-container {
       background: #fff;
       padding: 1rem;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    table {
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+    .table-container table {
       border-collapse: collapse;
       width: 100%;
       background: #fff;
@@ -50,11 +53,11 @@
   </style>
 </head>
 <body>
-  <h1>Lecturas recientes - Sensor 1</h1>
+  <h1>Lecturas recientes - Sensor S1</h1>
 
   <div class="container">
     <div class="chart-container">
-      <canvas id="sensorChart" height="100"></canvas>
+      <canvas id="sensorChart"></canvas>
     </div>
     <div class="table-container">
       <table>
@@ -101,7 +104,7 @@
         data: {
           labels: data.map(d => d.timestamp),
           datasets: [{
-            label: "Sensor 1",
+            label: "Sensor Sensor1",
             data: data.map(d => parseFloat(d.valor)),
             fill: false,
             borderColor: "green",
@@ -110,6 +113,7 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           scales: {
             x: {
               title: {
