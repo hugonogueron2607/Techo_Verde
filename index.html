@@ -29,7 +29,7 @@
   </div>
 
   <script>
-    fetch("http://127.0.0.1:8000/sensor/S1")
+    fetch("https://techo-verde-api-2.onrender.com/sensor/S1")
       .then(response => response.json())
       .then(data => {
         const etiquetas = data.datos.map(item => item.timestamp);
