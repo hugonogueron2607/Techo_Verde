@@ -43,7 +43,7 @@
   </table>
 
   <script>
-    const API_URL = "https://techo-verde-api-2.onrender.com/sensor/S1";
+    const API_URL = "https://techo-verde-api-2.onrender.com/sensor/Sensor1";
 
     async function fetchData() {
       console.log("Solicitando datos desde:", API_URL);
@@ -74,7 +74,7 @@
         data: {
           labels: data.map(d => d.timestamp),
           datasets: [{
-            label: "Sensor S1",
+            label: "Sensor Sensor1",
             data: data.map(d => parseFloat(d.valor)),
             fill: false,
             borderColor: "green",
