@@ -2,78 +2,92 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Gráfica Sensor 1 desde API</title>
+  <title>Lecturas de Sensor - Techo Verde</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    h2 {
-      text-align: center;
-    }
-    #graficaContainer {
-      max-width: 900px;
-      margin: 0 auto;
+      padding: 2rem;
+      background: #f3f3f3;
     }
     canvas {
+      max-width: 100%;
+    }
+    table {
+      border-collapse: collapse;
       width: 100%;
-      height: auto;
+      background: #fff;
+      margin-top: 2rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    th {
+      background-color: #e0e0e0;
     }
   </style>
 </head>
 <body>
-  <h2>Gráfica Sensor 1 - Datos desde API FastAPI</h2>
-  <div id="graficaContainer">
-    <canvas id="graficaSensor1"></canvas>
-  </div>
+  <h1>Lecturas recientes - Sensor S1</h1>
+  <canvas id="sensorChart" height="100"></canvas>
+  <table>
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+    <tbody id="sensorTableBody"></tbody>
+  </table>
 
   <script>
-    fetch("https://techo-verde-api-2.onrender.com/sensor/S1")
-      .then(response => response.json())
-      .then(data => {
-        const etiquetas = data.datos.map(item => item.timestamp);
-        const valores = data.datos.map(item => parseFloat(item.valor));
+    const API_URL = "https://techo-verde-api-2.onrender.com/sensor/S1";
 
-        const ctx = document.getElementById("graficaSensor1").getContext("2d");
+    async function fetchData() {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      return data.datos.slice(-20);
+    }
 
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: etiquetas,
-            datasets: [{
-              label: "Temperatura (°C)",
-              data: valores,
-              borderColor: "rgba(75, 192, 192, 1)",
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              fill: true,
-              tension: 0.3,
-              pointRadius: 4
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              title: {
-                display: true,
-                text: "Últimas lecturas - Sensor 1"
-              }
-            },
-            scales: {
-              x: {
-                title: { display: true, text: "Fecha y hora" }
-              },
-              y: {
-                title: { display: true, text: "Temperatura (°C)" },
-                beginAtZero: false
-              }
-            }
-          }
-        });
-      })
-      .catch(error => {
-        console.error("Error al obtener datos del backend:", error);
+    function renderTable(data) {
+      const tbody = document.getElementById("sensorTableBody");
+      tbody.innerHTML = "";
+      data.forEach(d => {
+        const row = `<tr><td>${d.timestamp}</td><td>${d.valor}</td></tr>`;
+        tbody.innerHTML += row;
       });
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById("sensorChart").getContext("2d");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: data.map(d => d.timestamp),
+          datasets: [{
+            label: "Sensor S1",
+            data: data.map(d => parseFloat(d.valor)),
+            fill: false,
+            borderColor: "green",
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: "Tiempo" }},
+            y: { title: { display: true, text: "Valor" }}
+          }
+        }
+      });
+    }
+
+    fetchData().then(data => {
+      renderTable(data);
+      renderChart(data);
+    });
   </script>
 </body>
 </html>
