@@ -13,27 +13,33 @@
     h1 {
       text-align: center;
     }
+    select {
+      display: block;
+      margin: 0 auto 2rem auto;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
     .container {
       display: flex;
-      flex-direction: row;
-      gap: 2rem;
-      align-items: flex-start;
       justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
     }
     .chart-container, .table-container {
       flex: 1;
+      min-width: 300px;
+    }
+    canvas {
+      max-width: 100%;
       background: #fff;
       padding: 1rem;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    canvas {
-      width: 100% !important;
-      height: 400px !important;
-    }
     table {
       border-collapse: collapse;
       width: 100%;
+      background: #fff;
     }
     th, td {
       border: 1px solid #ccc;
@@ -46,11 +52,16 @@
   </style>
 </head>
 <body>
-  <h1>Lecturas recientes - Sensor S1</h1>
+  <h1>Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h1>
+
+  <select id="sensorSelect">
+    <option value="Sensor1">Sensor 1</option>
+    <option value="Sensor2">Sensor 2</option>
+  </select>
 
   <div class="container">
     <div class="chart-container">
-      <canvas id="sensorChart"></canvas>
+      <canvas id="sensorChart" height="100"></canvas>
     </div>
     <div class="table-container">
       <table>
@@ -66,9 +77,10 @@
   </div>
 
   <script>
-    const API_URL = "https://techo-verde-api-2.onrender.com/sensor/Sensor1";
+    let chart;
 
-    async function fetchData() {
+    async function fetchData(sensor) {
+      const API_URL = `https://techo-verde-api-2.onrender.com/sensor/${sensor}`;
       console.log("Solicitando datos desde:", API_URL);
       try {
         const response = await fetch(API_URL);
@@ -90,14 +102,15 @@
       });
     }
 
-    function renderChart(data) {
+    function renderChart(data, sensor) {
       const ctx = document.getElementById("sensorChart").getContext("2d");
-      new Chart(ctx, {
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
         type: "line",
         data: {
           labels: data.map(d => d.timestamp),
           datasets: [{
-            label: "Sensor Sensor1",
+            label: `Sensor ${sensor}`,
             data: data.map(d => parseFloat(d.valor)),
             fill: false,
             borderColor: "green",
@@ -106,7 +119,6 @@
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false,
           scales: {
             x: {
               title: {
@@ -126,10 +138,18 @@
       });
     }
 
-    fetchData().then(data => {
+    async function updateSensor(sensor) {
+      document.getElementById("sensorLabel").textContent = sensor.replace("Sensor", "S");
+      const data = await fetchData(sensor);
       renderTable(data);
-      renderChart(data);
+      renderChart(data, sensor);
+    }
+
+    document.getElementById("sensorSelect").addEventListener("change", (e) => {
+      updateSensor(e.target.value);
     });
+
+    updateSensor("Sensor1");
   </script>
 </body>
 </html>
