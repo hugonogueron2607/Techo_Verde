@@ -4,77 +4,28 @@
   <meta charset="UTF-8">
   <title>Lecturas de Sensor - Techo Verde</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #f3f3f3;
-    }
-    h1 {
-      text-align: center;
-    }
-    select {
-      display: block;
-      margin: 0 auto 2rem auto;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-    .chart-container, .table-container {
-      flex: 1;
-      min-width: 300px;
-    }
-    canvas {
-      max-width: 100%;
-      background: #fff;
-      padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      background: #fff;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
-      text-align: center;
-    }
-    th {
-      background-color: #e0e0e0;
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h1>
+<body class="bg-gray-100 font-sans p-6">
+  <h1 class="text-2xl font-bold text-center mb-6">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h1>
 
-  <select id="sensorSelect">
-    <option value="Sensor1">Sensor 1</option>
-    <option value="Sensor2">Sensor 2</option>
-    <option value="Sensor3">Sensor 3</option>
-    <option value="Sensor4">Sensor 4</option>
-    <option value="Sensor5">Sensor 5</option>
-    <option value="Sensor6">Sensor 6</option>
-    <option value="Sensor7">Sensor 7</option>
-    <option value="Sensor8">Sensor 8</option>
-  </select>
+  <div class="flex justify-center mb-6">
+    <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
+      <option value="Sensor1">Sensor 1</option>
+      <option value="Sensor2">Sensor 2</option>
+    </select>
+  </div>
 
-  <div class="container">
-    <div class="chart-container">
-      <canvas id="sensorChart" height="100"></canvas>
+  <div class="flex flex-wrap justify-center gap-6">
+    <div class="w-full md:w-1/2">
+      <canvas id="sensorChart" class="bg-white p-4 rounded shadow"></canvas>
     </div>
-    <div class="table-container">
-      <table>
+    <div class="w-full md:w-1/2 overflow-x-auto">
+      <table class="w-full bg-white rounded shadow">
         <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>Valor</th>
+          <tr class="bg-gray-200">
+            <th class="border px-4 py-2">Timestamp</th>
+            <th class="border px-4 py-2">Valor</th>
           </tr>
         </thead>
         <tbody id="sensorTableBody"></tbody>
@@ -103,7 +54,7 @@
       const tbody = document.getElementById("sensorTableBody");
       tbody.innerHTML = "";
       data.forEach(d => {
-        const row = `<tr><td>${d.timestamp}</td><td>${d.valor}</td></tr>`;
+        const row = `<tr><td class='border px-4 py-2'>${d.timestamp}</td><td class='border px-4 py-2'>${d.valor}</td></tr>`;
         tbody.innerHTML += row;
       });
     }
