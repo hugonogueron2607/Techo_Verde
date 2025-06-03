@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lecturas de Sensor - Techo Verde</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans p-6">
+  <h1 class="text-2xl font-bold text-center mb-6">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h1>
+
+  <div class="flex justify-center mb-6">
+    <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
+      <option value="Sensor1">Sensor 1</option>
+      <option value="Sensor2">Sensor 2</option>
+      <option value="Sensor3">Sensor 3</option>
+      <option value="Sensor4">Sensor 4</option>
+      <option value="Sensor5">Sensor 5</option>
+      <option value="Sensor6">Sensor 6</option>
+      <option value="Sensor7">Sensor 7</option>
+      <option value="Sensor8">Sensor 8</option>
+    </select>
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-6">
+    <div class="w-full md:w-1/2">
+      <canvas id="sensorChart" class="bg-white p-4 rounded shadow"></canvas>
+    </div>
+    <div class="w-full md:w-1/2 overflow-x-auto">
+      <table class="w-full bg-white rounded shadow">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border px-4 py-2">Timestamp</th>
+            <th class="border px-4 py-2">Valor</th>
+          </tr>
+        </thead>
+        <tbody id="sensorTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let chart;
+
+    async function fetchData(sensor) {
+      const API_URL = `https://techo-verde-api-2.onrender.com/sensor/${sensor}`;
+      console.log("Solicitando datos desde:", API_URL);
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        console.log("Datos recibidos:", data);
+        return data.datos.slice(-20).reverse();
+      } catch (error) {
+        console.error("❌ Error al obtener datos:", error);
+        return [];
+      }
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById("sensorTableBody");
+      tbody.innerHTML = "";
+      data.forEach(d => {
+        const row = `<tr><td class='border px-4 py-2'>${d.timestamp}</td><td class='border px-4 py-2'>${d.valor}</td></tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function renderChart(data, sensor) {
+      const ctx = document.getElementById("sensorChart").getContext("2d");
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: data.map(d => d.timestamp),
+          datasets: [{
+            label: ` ${sensor}`,
+            data: data.map(d => parseFloat(d.valor)),
+            fill: false,
+            borderColor: "green",
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Tiempo"
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Valor"
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    async function updateSensor(sensor) {
+      document.getElementById("sensorLabel").textContent = sensor.replace("Sensor", "S");
+      const data = await fetchData(sensor);
+      renderTable(data);
+      renderChart(data, sensor);
+    }
+
+    document.getElementById("sensorSelect").addEventListener("change", (e) => {
+      updateSensor(e.target.value);
+    });
+
+    updateSensor("Sensor1");
+  </script>
+</body>
+</html>

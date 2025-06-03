@@ -2,54 +2,98 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Lecturas de Sensor - Techo Verde</title>
+  <title>Monitoreo - Techo Verde</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans p-6">
-  <h1 class="text-2xl font-bold text-center mb-6">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h1>
+<body class="bg-gray-100 font-sans p-4">
+  <header class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Panel Principal</h1>
+    <button id="toggleMenu" class="text-2xl">☰</button>
+  </header>
 
-  <div class="flex justify-center mb-6">
-    <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
-      <option value="Sensor1">Sensor 1</option>
-      <option value="Sensor2">Sensor 2</option>
-      <option value="Sensor3">Sensor 3</option>
-      <option value="Sensor4">Sensor 4</option>
-      <option value="Sensor5">Sensor 5</option>
-      <option value="Sensor6">Sensor 6</option>
-      <option value="Sensor7">Sensor 7</option>
-      <option value="Sensor8">Sensor 8</option>
-    </select>
+  <!-- Vista resumen -->
+  <div id="mainDashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 1:</p><p id="Sensor1Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 2:</p><p id="Sensor2Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 3:</p><p id="Sensor3Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 4:</p><p id="Sensor4Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 5:</p><p id="Sensor5Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 6:</p><p id="Sensor6Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 7:</p><p id="Sensor7Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">Sensor 8:</p><p id="Sensor8Value">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">% Batería:</p><p id="porcentajeBateria">--</p></div>
+    <div class="bg-white p-4 rounded shadow"><p class="font-semibold">% Panel:</p><p id="porcentajePanel">--</p></div>
   </div>
 
-  <div class="flex flex-wrap justify-center gap-6">
-    <div class="w-full md:w-1/2">
-      <canvas id="sensorChart" class="bg-white p-4 rounded shadow"></canvas>
+  <!-- Vista sensores (oculta inicialmente) -->
+  <div id="sensorDashboard" class="hidden mt-10">
+    <h2 class="text-xl font-semibold text-center mb-6">Lecturas de Sensor <span id="sensorLabel">S1</span></h2>
+    <div class="flex justify-center mb-6">
+      <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
+        <option value="Sensor1">Sensor 1</option>
+        <option value="Sensor2">Sensor 2</option>
+        <option value="Sensor3">Sensor 3</option>
+        <option value="Sensor4">Sensor 4</option>
+        <option value="Sensor5">Sensor 5</option>
+        <option value="Sensor6">Sensor 6</option>
+        <option value="Sensor7">Sensor 7</option>
+        <option value="Sensor8">Sensor 8</option>
+      </select>
     </div>
-    <div class="w-full md:w-1/2 overflow-x-auto">
-      <table class="w-full bg-white rounded shadow">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="border px-4 py-2">Timestamp</th>
-            <th class="border px-4 py-2">Valor</th>
-          </tr>
-        </thead>
-        <tbody id="sensorTableBody"></tbody>
-      </table>
+    <div class="flex flex-wrap justify-center gap-6">
+      <div class="w-full md:w-1/2">
+        <canvas id="sensorChart" class="bg-white p-4 rounded shadow"></canvas>
+      </div>
+      <div class="w-full md:w-1/2 overflow-x-auto">
+        <table class="w-full bg-white rounded shadow">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border px-4 py-2">Timestamp</th>
+              <th class="border px-4 py-2">Valor</th>
+            </tr>
+          </thead>
+          <tbody id="sensorTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
     let chart;
 
+    document.getElementById("toggleMenu").addEventListener("click", () => {
+      document.getElementById("mainDashboard").classList.toggle("hidden");
+      document.getElementById("sensorDashboard").classList.toggle("hidden");
+    });
+
+    async function fetchSensor(sensor) {
+      const res = await fetch(`https://techo-verde-api-2.onrender.com/sensor/${sensor}`);
+      const data = await res.json();
+      return data.datos.length > 0 ? data.datos[data.datos.length - 1].valor : "--";
+    }
+
+    async function fetchExtras() {
+      const res = await fetch("https://techo-verde-api-2.onrender.com/extras");
+      return await res.json();
+    }
+
+    async function fillMainDashboard() {
+      for (let i = 1; i <= 8; i++) {
+        const val = await fetchSensor(`Sensor${i}`);
+        document.getElementById(`Sensor${i}Value`).textContent = val;
+      }
+      const extras = await fetchExtras();
+      document.getElementById("porcentajeBateria").textContent = extras.porcentajeBateria || "--";
+      document.getElementById("porcentajePanel").textContent = extras.porcentajePanel || "--";
+    }
+
     async function fetchData(sensor) {
       const API_URL = `https://techo-verde-api-2.onrender.com/sensor/${sensor}`;
-      console.log("Solicitando datos desde:", API_URL);
       try {
         const response = await fetch(API_URL);
         const data = await response.json();
-        console.log("Datos recibidos:", data);
-        return data.datos.slice(-20).reverse();
+        return data.datos.slice(-20);
       } catch (error) {
         console.error("❌ Error al obtener datos:", error);
         return [];
@@ -84,16 +128,10 @@
           responsive: true,
           scales: {
             x: {
-              title: {
-                display: true,
-                text: "Tiempo"
-              }
+              title: { display: true, text: "Tiempo" }
             },
             y: {
-              title: {
-                display: true,
-                text: "Valor"
-              },
+              title: { display: true, text: "Valor" },
               beginAtZero: true
             }
           }
@@ -112,6 +150,7 @@
       updateSensor(e.target.value);
     });
 
+    fillMainDashboard();
     updateSensor("Sensor1");
   </script>
 </body>
