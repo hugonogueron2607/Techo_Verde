@@ -49,7 +49,7 @@
         const response = await fetch(API_URL);
         const data = await response.json();
         console.log("Datos recibidos:", data);
-        return data.datos.slice(-20);
+        return data.datos.slice(-20).reverse();
       } catch (error) {
         console.error("❌ Error al obtener datos:", error);
         return [];
