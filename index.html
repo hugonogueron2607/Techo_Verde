@@ -11,8 +11,8 @@
 
   <div class="flex justify-center mb-6">
     <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
-      <option value="S1">Sensor 1</option>
-      <option value="S2">Sensor 2</option>
+      <option value="Sensor1">Sensor 1</option>
+      <option value="Sensor2">Sensor 2</option>
     </select>
   </div>
 
@@ -67,10 +67,10 @@
         data: {
           labels: data.map(d => d.timestamp),
           datasets: [{
-            label: `S ${sensor}`,
+            label: `Sensor ${sensor}`,
             data: data.map(d => parseFloat(d.valor)),
             fill: false,
-            borderColor: "cyan",
+            borderColor: "green",
             tension: 0.1
           }]
         },
