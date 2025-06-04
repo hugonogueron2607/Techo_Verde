@@ -1,199 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Techo Verde - Monitoreo</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <title>Techo Verde - Monitor de Sensores</title>
+  <link href="style.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 font-sans">
-
-  <!-- Barra superior -->
-  <div class="flex justify-between items-center p-4 bg-green-600 text-white">
+<body class="bg-gray-100 font-sans p-4">
+  <header class="bg-green-600 text-white p-4 flex justify-between items-center">
     <h1 class="text-xl font-bold">Techo Verde</h1>
-    <button id="menuButton" class="text-white hover:text-gray-200">&#9776; Menú</button>
-  </div>
+    <button id="menuBtn" class="text-white">☰ Menú</button>
+  </header>
 
-  <!-- Menú desplegable -->
-  <div id="menuOptions" class="hidden bg-white shadow-md rounded p-4 absolute top-16 right-4 z-50">
-    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick="showView('resumen')">Resumen</button>
-    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick="showView('historial')">Historial</button>
-    <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick="showView('comparativa')">Comparativa</button>
-  </div>
+  <nav id="menu" class="hidden bg-white shadow-md p-4 mt-2">
+    <button data-view="dashboard" class="mr-4">Panel Principal</button>
+    <button data-view="history">Historial de Sensores</button>
+  </nav>
 
-  <!-- Contenedor de vistas -->
-  <div id="resumen" class="p-6 hidden">
-    <h2 class="text-xl font-semibold mb-4">Últimos valores registrados</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <!-- Aquí se llenarán los valores dinámicamente -->
-      <div class="bg-white p-4 shadow rounded" id="porcentajeBateriaBox"></div>
-      <div class="bg-white p-4 shadow rounded" id="porcentajePanelBox"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor1Box"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor2Box"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor3Box"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor4Box"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor5Box"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor6Box"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor7Box"></div>
-      <div class="bg-white p-4 shadow rounded" id="Sensor8Box"></div>
-    </div>
-  </div>
-
-  <!-- Historial por sensor -->
-  <div id="historial" class="p-6 hidden">
-    <div class="mb-4 flex justify-center">
-      <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
-        ${[...Array(8)].map((_, i) => `<option value="Sensor${i+1}">Sensor ${i+1}</option>`).join("")}
+  <main id="dashboardView" class="mt-4">
+    <h2 class="text-center text-lg font-semibold mb-4">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h2>
+    <div class="flex justify-center mb-4">
+      <select id="sensorSelect" class="p-2 border rounded">
+        <!-- Opciones dinámicas desde JS -->
       </select>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <canvas id="sensorChart" class="bg-white p-4 rounded shadow"></canvas>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full bg-white rounded shadow">
-          <thead>
-            <tr class="bg-gray-200">
-              <th class="border px-4 py-2">Timestamp</th>
-              <th class="border px-4 py-2">Valor</th>
-            </tr>
-          </thead>
-          <tbody id="sensorTableBody"></tbody>
-        </table>
-      </div>
+    <div class="flex flex-wrap justify-center gap-4">
+      <canvas id="sensorChart" class="bg-white p-2 rounded shadow w-full md:w-[48%]"></canvas>
+      <table class="w-full md:w-[48%] bg-white rounded shadow">
+        <thead><tr class="bg-gray-200"><th class="p-2 border">Timestamp</th><th class="p-2 border">Valor</th></tr></thead>
+        <tbody id="sensorTableBody"></tbody>
+      </table>
     </div>
-  </div>
+  </main>
 
-  <!-- Comparativa -->
-  <div id="comparativa" class="p-6 hidden relative">
-    <h2 class="text-xl font-semibold mb-4">Comparativa entre sensores</h2>
-    <canvas id="comparativeChart" class="bg-white p-4 rounded shadow"></canvas>
-    <button id="downloadBtn" class="absolute bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700">Descargar</button>
-  </div>
+  <main id="historyView" class="mt-4 hidden">
+    <h2 class="text-center text-lg font-semibold mb-4">Comparativa de Sensores</h2>
+    <canvas id="compareChart" class="bg-white p-4 rounded shadow w-full"></canvas>
+    <div class="flex justify-end mt-2">
+      <button id="downloadBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Descargar Imagen</button>
+    </div>
+  </main>
 
-  <!-- Script principal -->
-  <script>
-    const apiBase = "https://techo-verde-api-2.onrender.com";
-
-    let chart, comparativeChart;
-
-    const showView = (id) => {
-      ["resumen", "historial", "comparativa"].forEach(view => {
-        document.getElementById(view).classList.add("hidden");
-      });
-      document.getElementById(id).classList.remove("hidden");
-      document.getElementById("menuOptions").classList.add("hidden");
-    };
-
-    document.getElementById("menuButton").addEventListener("click", () => {
-      document.getElementById("menuOptions").classList.toggle("hidden");
-    });
-
-    document.getElementById("sensorSelect").addEventListener("change", (e) => {
-      updateSensor(e.target.value);
-    });
-
-    async function fetchSensor(sensorId) {
-      const res = await fetch(`${apiBase}/sensor/${sensorId}`);
-      const data = await res.json();
-      return data.datos.reverse().slice(0, 20); // más recientes primero
-    }
-
-    async function updateSensor(sensorId) {
-      const data = await fetchSensor(sensorId);
-      renderTable(data);
-      renderChart(data, sensorId);
-    }
-
-    function renderTable(data) {
-      const tbody = document.getElementById("sensorTableBody");
-      tbody.innerHTML = data.map(d => `<tr><td class='border px-4 py-2'>${d.timestamp}</td><td class='border px-4 py-2'>${d.valor}</td></tr>`).join("");
-    }
-
-    function renderChart(data, sensorId) {
-      const ctx = document.getElementById("sensorChart").getContext("2d");
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: data.map(d => d.timestamp),
-          datasets: [{
-            label: sensorId,
-            data: data.map(d => parseFloat(d.valor)),
-            borderColor: "green",
-            tension: 0.2
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: { beginAtZero: true },
-            x: { title: { display: true, text: "Tiempo" } }
-          }
-        }
-      });
-    }
-
-    async function loadResumen() {
-      const res = await fetch(`${apiBase}/sensores`);
-      const all = await res.json();
-      all.forEach(sensor => {
-        const last = sensor.datos[sensor.datos.length - 1];
-        const box = document.getElementById(sensor.sensor + "Box");
-        if (box) {
-          box.innerHTML = `<h3 class="text-lg font-bold">${sensor.sensor}</h3><p>${last.valor}</p>`;
-        }
-      });
-    }
-
-    async function loadComparativa() {
-      const res = await fetch(`${apiBase}/sensores`);
-      const all = await res.json();
-
-      const ctx = document.getElementById("comparativeChart").getContext("2d");
-      if (comparativeChart) comparativeChart.destroy();
-
-      comparativeChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: all[0].datos.map(d => d.timestamp),
-          datasets: all.map((sensor, i) => ({
-            label: sensor.sensor,
-            data: sensor.datos.map(d => parseFloat(d.valor)),
-            borderColor: `hsl(${i * 45}, 70%, 50%)`,
-            tension: 0.2
-          }))
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.dataset.label}: ${context.formattedValue}`;
-                }
-              }
-            }
-          },
-          scales: {
-            y: { beginAtZero: true }
-          }
-        }
-      });
-
-      document.getElementById("downloadBtn").onclick = () => {
-        const a = document.createElement('a');
-        a.href = comparativeChart.toBase64Image();
-        a.download = 'comparativa.png';
-        a.click();
-      };
-    }
-
-    // Inicialización
-    showView("resumen");
-    updateSensor("Sensor1");
-    loadResumen();
-    loadComparativa();
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
