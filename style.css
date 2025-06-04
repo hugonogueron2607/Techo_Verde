@@ -1,3 +1,52 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-gray-100 font-sans text-gray-900;
+}
+
+header {
+  @apply bg-green-600 text-white p-4 flex justify-between items-center;
+}
+
+h1 {
+  @apply text-2xl font-bold;
+}
+
+.menu-button {
+  @apply text-white cursor-pointer;
+}
+
+.menu-options {
+  @apply flex gap-2 mt-4;
+}
+
+.menu-options button {
+  @apply bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 transition;
+}
+
+select {
+  @apply border border-gray-300 rounded px-2 py-1 mt-4;
+}
+
+canvas {
+  @apply bg-white rounded shadow-md p-4 mt-4;
+}
+
+table {
+  @apply w-full mt-4 bg-white rounded shadow-md;
+}
+
+th, td {
+  @apply border px-4 py-2 text-center;
+}
+
+th {
+  @apply bg-gray-200 font-semibold;
+}
+
+#downloadButton {
+  @apply mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 fixed bottom-4 right-4 shadow-lg;
+}
