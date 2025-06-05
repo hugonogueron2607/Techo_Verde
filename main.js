@@ -132,8 +132,6 @@ function showSection(sectionId) {
   window.showSection = showSection;
 
   // Iniciar app
-  initSensorSelect();
-  updateSensor("Sensor1");
 
 let compareChart;
 
