@@ -118,6 +118,10 @@ function showSection(sectionId) {
   const target = document.getElementById(sectionId);
   if (target) target.classList.remove("hidden");
 
+  if (sectionId === "historyPanel"){
+    renderCompareChart();
+  }
+
   // Ocultar el menú
   const sideMenu = document.getElementById("sideMenu");
   if (sideMenu) sideMenu.classList.add("hidden");
@@ -130,4 +134,53 @@ function showSection(sectionId) {
   // Iniciar app
   initSensorSelect();
   updateSensor("Sensor1");
+
+let compareChart;
+
+async function renderCompareChart() {
+  try {
+    const response = await fetch(`${apiUrl}/sensores`);
+    const sensores = await response.json();
+
+    const datasets = sensores.map((sensor, i) => ({
+      label: sensor.sensor,
+      data: sensor.datos.map(d => parseFloat(d.valor)),
+      borderColor: `hsl(${i * 45}, 70%, 50%)`,
+      fill: false,
+      tension: 0.3,
+      pointRadius: 2
+    }));
+
+    const labels = sensores[0]?.datos.map(d => d.timestamp) || [];
+
+    const ctx = document.getElementById("compareChart").getContext("2d");
+    if (compareChart) compareChart.destroy();
+
+    compareChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            title: { display: true, text: "Tiempo" }
+          },
+          y: {
+            title: { display: true, text: "Valor" },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Error al obtener datos para comparativa:", error);
+  }
+}
+
+
+
 });
