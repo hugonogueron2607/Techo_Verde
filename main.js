@@ -8,10 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const sensorSelect = document.getElementById("sensorSelect");
   const tableBody = document.getElementById("sensorTableBody");
   const chartCanvas = document.getElementById("sensorChart")?.getContext("2d");
-  const downloadButton = document.getElementById("downloadGraph");
+  const downloadButton = document.getElementById("downloadBtn");
+  const resumenContainer = document.getElementById("resumenContainer");
+
   const menuToggle = document.getElementById("menuToggle");
   const sideMenu = document.getElementById("sideMenu");
-  const resumenContainer = document.getElementById("resumenPanel");
 
   if (menuToggle && sideMenu) {
     menuToggle.addEventListener("click", () => {
@@ -20,23 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let chart;
+  let compareChart;
 
-  initSensorSelect();
-  updateSensor("Sensor1");
-  cargarResumen();
-
-  function initSensorSelect() {
-    for (let i = 1; i <= 8; i++) {
-      const option = document.createElement("option");
-      option.value = `Sensor${i}`;
-      option.textContent = `Sensor ${i}`;
-      sensorSelect.appendChild(option);
-    }
-
-    sensorSelect.addEventListener("change", (e) => {
-      updateSensor(e.target.value);
+  function showSection(sectionId) {
+    const sections = ["resumenPanel", "mainPanel", "historyPanel"];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
     });
+    const target = document.getElementById(sectionId);
+    if (target) target.classList.remove("hidden");
+    if (sideMenu) sideMenu.classList.add("hidden");
   }
+
+  window.showSection = showSection;
 
   async function fetchSensorData(sensorId) {
     try {
@@ -46,6 +44,26 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error("Error al obtener datos:", err);
       return [];
+    }
+  }
+
+  async function fetchAllSensors() {
+    try {
+      const response = await fetch(`${apiUrl}/sensores`);
+      return await response.json();
+    } catch (err) {
+      console.error("Error al obtener sensores:", err);
+      return [];
+    }
+  }
+
+  async function fetchExtras() {
+    try {
+      const response = await fetch(`${apiUrl}/extras`);
+      return await response.json();
+    } catch (err) {
+      console.error("Error al obtener extras:", err);
+      return {};
     }
   }
 
@@ -97,95 +115,97 @@ document.addEventListener("DOMContentLoaded", () => {
     updateChart(data, sensorId);
   }
 
+  function initSensorSelect() {
+    for (let i = 1; i <= 8; i++) {
+      const option = document.createElement("option");
+      option.value = `Sensor${i}`;
+      option.textContent = `Sensor ${i}`;
+      sensorSelect.appendChild(option);
+    }
+    sensorSelect.addEventListener("change", (e) => {
+      updateSensor(e.target.value);
+    });
+  }
+
   if (downloadButton) {
     downloadButton.addEventListener("click", () => {
-      if (!chart) return;
+      if (!compareChart) return;
       const link = document.createElement("a");
-      link.href = chart.toBase64Image();
-      link.download = "grafica_sensor.png";
+      link.href = compareChart.toBase64Image();
+      link.download = "grafica_comparativa.png";
       link.click();
     });
   }
 
-  function showSection(sectionId) {
-    const sections = ["mainPanel", "historyPanel", "resumenPanel"];
-    sections.forEach(id => {
-      const section = document.getElementById(id);
-      if (section) section.classList.add("hidden");
-    });
-    const selected = document.getElementById(sectionId);
-    if (selected) selected.classList.remove("hidden");
-    if (sideMenu) sideMenu.classList.add("hidden");
-  }
+  async function initResumenPanel() {
+    const sensores = await fetchAllSensors();
+    const extras = await fetchExtras();
 
-  window.showSection = showSection;
-
-  async function cargarResumen() {
-    try {
-      const [sensorRes, extrasRes] = await Promise.all([
-        fetch(`${apiUrl}/sensores`).then(r => r.json()),
-        fetch(`${apiUrl}/extras`).then(r => r.json())
-      ]);
-
-      const sensores = {};
-      for (const sensorObj of sensorRes) {
-        const { sensor, datos } = sensorObj;
-        const ultimo = datos.at(-1);
-        sensores[sensor] = {
-          valor: ultimo?.valor || null,
-          timestamp: ultimo?.timestamp || null
+    const ultimoValorSensor = {};
+    sensores.forEach(sensor => {
+      const datos = sensor.datos;
+      const ultimo = datos[datos.length - 1];
+      if (ultimo) {
+        ultimoValorSensor[sensor.sensor] = {
+          valor: ultimo.valor,
+          timestamp: ultimo.timestamp
         };
       }
+    });
 
-      let html = `
-        <h2 class="text-xl font-bold mb-4 text-center">Resumen de Sensores</h2>
-        <div class="overflow-x-auto">
-          <table class="min-w-full bg-white shadow-md rounded">
-            <thead class="bg-gray-200">
-              <tr>
-                <th class="border px-4 py-2">Sensor</th>
-                <th class="border px-4 py-2">Valor</th>
-                <th class="border px-4 py-2">Hora</th>
-              </tr>
-            </thead>
-            <tbody>`;
-
-      for (let sensor in sensores) {
-        const s = sensores[sensor];
-        html += `
-              <tr>
-                <td class="border px-4 py-2">${sensor}</td>
-                <td class="border px-4 py-2">${s.valor ?? "--"}</td>
-                <td class="border px-4 py-2">${s.timestamp ?? "--"}</td>
-              </tr>`;
-      }
-
-      html += `</tbody></table></div>`;
-
+    let html = `
+      <h2 class="text-xl font-bold mb-4 text-center">Resumen de Sensores</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white shadow-md rounded">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border px-4 py-2">Sensor</th>
+              <th class="border px-4 py-2">Valor</th>
+              <th class="border px-4 py-2">Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+    for (let sensor in ultimoValorSensor) {
+      const s = ultimoValorSensor[sensor];
       html += `
-        <h2 class="text-xl font-bold mt-8 mb-4 text-center">Estado del Sistema</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div class="bg-white p-4 rounded shadow">
-            <div class="text-sm text-gray-500">Voltaje Panel</div>
-            <div class="text-xl">${extrasRes.voltajePanel ?? "--"} V</div>
-          </div>
-          <div class="bg-white p-4 rounded shadow">
-            <div class="text-sm text-gray-500">Voltaje Batería</div>
-            <div class="text-xl">${extrasRes.voltajeBateria ?? "--"} V</div>
-          </div>
-          <div class="bg-white p-4 rounded shadow">
-            <div class="text-sm text-gray-500">% Batería</div>
-            <div class="text-xl">${extrasRes.porcentajeBateria ?? "--"}%</div>
-          </div>
-          <div class="bg-white p-4 rounded shadow">
-            <div class="text-sm text-gray-500">% Panel Solar</div>
-            <div class="text-xl">${extrasRes.porcentajePanel ?? "--"}%</div>
-          </div>
-        </div>`;
-
-      resumenContainer.innerHTML = html;
-    } catch (err) {
-      console.error("Error al cargar resumen:", err);
+        <tr>
+          <td class="border px-4 py-2">${sensor}</td>
+          <td class="border px-4 py-2">${s.valor ?? "--"}</td>
+          <td class="border px-4 py-2">${s.timestamp ?? "--"}</td>
+        </tr>
+      `;
     }
+    html += `</tbody></table></div>`;
+
+    html += `
+      <h2 class="text-xl font-bold mt-8 mb-4 text-center">Estado del Sistema</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="bg-white p-4 rounded shadow">
+          <div class="text-sm text-gray-500">Voltaje Panel</div>
+          <div class="text-xl">${extras.voltajePanel ?? "--"} V</div>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <div class="text-sm text-gray-500">Voltaje Batería</div>
+          <div class="text-xl">${extras.voltajeBateria ?? "--"} V</div>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <div class="text-sm text-gray-500">% Batería</div>
+          <div class="text-xl">${extras.porcentajeBateria ?? "--"}%</div>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <div class="text-sm text-gray-500">% Panel Solar</div>
+          <div class="text-xl">${extras.porcentajePanel ?? "--"}%</div>
+        </div>
+      </div>
+    `;
+
+    if (resumenContainer) resumenContainer.innerHTML = html;
   }
+
+  // Inicialización general
+  initSensorSelect();
+  updateSensor("Sensor1");
+  initResumenPanel();
+  showSection("resumenPanel");
 });
