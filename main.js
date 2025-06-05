@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const sensorLabel = document.getElementById("sensorLabel");
   const sensorSelect = document.getElementById("sensorSelect");
   const tableBody = document.getElementById("sensorTableBody");
-  const chartCanvas = document.getElementById("sensorChart").getContext("2d");
+  const chartCanvas = document.getElementById("sensorChart")?.getContext("2d");
   const downloadButton = document.getElementById("downloadGraph");
-
   const menuToggle = document.getElementById("menuToggle");
   const sideMenu = document.getElementById("sideMenu");
+  const resumenContainer = document.getElementById("resumenPanel");
 
   if (menuToggle && sideMenu) {
     menuToggle.addEventListener("click", () => {
@@ -21,9 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let chart;
 
-  // Inicialización
   initSensorSelect();
   updateSensor("Sensor1");
+  cargarResumen();
 
   function initSensorSelect() {
     for (let i = 1; i <= 8; i++) {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-   function updateTable(data) {
+  function updateTable(data) {
     if (!tableBody) return;
     tableBody.innerHTML = "";
     data.forEach(({ timestamp, valor }) => {
@@ -107,78 +107,85 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Mostrar la sección seleccionada
-function showSection(sectionId) {
-  const sections = ["mainPanel", "historyPanel"];
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add("hidden");
-  });
-
-  const target = document.getElementById(sectionId);
-  if (target) target.classList.remove("hidden");
-
-  if (sectionId === "historyPanel"){
-    renderCompareChart();
+  function showSection(sectionId) {
+    const sections = ["mainPanel", "historyPanel", "resumenPanel"];
+    sections.forEach(id => {
+      const section = document.getElementById(id);
+      if (section) section.classList.add("hidden");
+    });
+    const selected = document.getElementById(sectionId);
+    if (selected) selected.classList.remove("hidden");
+    if (sideMenu) sideMenu.classList.add("hidden");
   }
 
-  // Ocultar el menú
-  const sideMenu = document.getElementById("sideMenu");
-  if (sideMenu) sideMenu.classList.add("hidden");
-}
-
-
-  // Hacer accesible globalmente para onclick=""
   window.showSection = showSection;
 
-  // Iniciar app
+  async function cargarResumen() {
+    try {
+      const [sensorRes, extrasRes] = await Promise.all([
+        fetch(`${apiUrl}/sensores`).then(r => r.json()),
+        fetch(`${apiUrl}/extras`).then(r => r.json())
+      ]);
 
-let compareChart;
-
-async function renderCompareChart() {
-  try {
-    const response = await fetch(`${apiUrl}/sensores`);
-    const sensores = await response.json();
-
-    const datasets = sensores.map((sensor, i) => ({
-      label: sensor.sensor,
-      data: sensor.datos.map(d => parseFloat(d.valor)),
-      borderColor: `hsl(${i * 45}, 70%, 50%)`,
-      fill: false,
-      tension: 0.3,
-      pointRadius: 2
-    }));
-
-    const labels = sensores[0]?.datos.map(d => d.timestamp) || [];
-
-    const ctx = document.getElementById("compareChart").getContext("2d");
-    if (compareChart) compareChart.destroy();
-
-    compareChart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels,
-        datasets
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            title: { display: true, text: "Tiempo" }
-          },
-          y: {
-            title: { display: true, text: "Valor" },
-            beginAtZero: true
-          }
-        }
+      const sensores = {};
+      for (const sensorObj of sensorRes) {
+        const { sensor, datos } = sensorObj;
+        const ultimo = datos.at(-1);
+        sensores[sensor] = {
+          valor: ultimo?.valor || null,
+          timestamp: ultimo?.timestamp || null
+        };
       }
-    });
 
-  } catch (error) {
-    console.error("Error al obtener datos para comparativa:", error);
+      let html = `
+        <h2 class="text-xl font-bold mb-4 text-center">Resumen de Sensores</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white shadow-md rounded">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="border px-4 py-2">Sensor</th>
+                <th class="border px-4 py-2">Valor</th>
+                <th class="border px-4 py-2">Hora</th>
+              </tr>
+            </thead>
+            <tbody>`;
+
+      for (let sensor in sensores) {
+        const s = sensores[sensor];
+        html += `
+              <tr>
+                <td class="border px-4 py-2">${sensor}</td>
+                <td class="border px-4 py-2">${s.valor ?? "--"}</td>
+                <td class="border px-4 py-2">${s.timestamp ?? "--"}</td>
+              </tr>`;
+      }
+
+      html += `</tbody></table></div>`;
+
+      html += `
+        <h2 class="text-xl font-bold mt-8 mb-4 text-center">Estado del Sistema</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div class="bg-white p-4 rounded shadow">
+            <div class="text-sm text-gray-500">Voltaje Panel</div>
+            <div class="text-xl">${extrasRes.voltajePanel ?? "--"} V</div>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <div class="text-sm text-gray-500">Voltaje Batería</div>
+            <div class="text-xl">${extrasRes.voltajeBateria ?? "--"} V</div>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <div class="text-sm text-gray-500">% Batería</div>
+            <div class="text-xl">${extrasRes.porcentajeBateria ?? "--"}%</div>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <div class="text-sm text-gray-500">% Panel Solar</div>
+            <div class="text-xl">${extrasRes.porcentajePanel ?? "--"}%</div>
+          </div>
+        </div>`;
+
+      resumenContainer.innerHTML = html;
+    } catch (err) {
+      console.error("Error al cargar resumen:", err);
+    }
   }
-}
-
-
-
 });
