@@ -108,17 +108,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Mostrar la sección seleccionada
-  function showSection(sectionId) {
-    const sections = ["mainPanel", "historyPanel"];
-    sections.forEach(id => {
-      document.getElementById(id).classList.add("hidden");
-    });
-    document.getElementById(sectionId).classList.remove("hidden");
+function showSection(sectionId) {
+  const sections = ["mainPanel", "historyPanel"];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("hidden");
+  });
 
-  // Ocultar el menú después de hacer clic
-    const menu = document.getElementById("dropdownMenu");
-    if (menu) menu.classList.add("hidden");
-  }
+  const target = document.getElementById(sectionId);
+  if (target) target.classList.remove("hidden");
+
+  // Ocultar el menú
+  const sideMenu = document.getElementById("sideMenu");
+  if (sideMenu) sideMenu.classList.add("hidden");
+}
 
 
   // Hacer accesible globalmente para onclick=""

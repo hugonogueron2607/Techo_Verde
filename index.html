@@ -14,18 +14,18 @@
 
     <div class="relative inline-block text-left">
       <button id="menuToggle" class="text-white">&#9776; Menú</button>
-      <nav id="sideMenu" class="hidden absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+    <nav id="sideMenu" class="hidden absolute right-4 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+     <ul class="py-1 text-gray-800">
+        <li><button onclick="showSection('mainPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Panel Principal</button></li>
+        <li><button onclick="showSection('historyPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Historial de Sensores</button></li>
+      </ul>
+    </nav>
+
     </div>
 
   </header>
 
-  <!-- Sidebar Menu -->
-      <ul class="space-y-2">
-      <li><button onclick="showSection('mainPanel')" class="w-full text-left px-4 py-2 rounded hover:bg-gray-200">Panel Principal</button></li>
-      <li><button onclick="showSection('historyPanel')" class="w-full text-left px-4 py-2 rounded hover:bg-gray-200">Historial de Sensores</button></li>
-    </ul>
-  </nav>
-
+</nav>
   <!-- Main Content -->
   <main id="mainPanel" class="p-6">
     <h2 class="text-center text-xl font-semibold mb-4">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h2>
