@@ -1,115 +1,93 @@
-let chart, compareChart;
-const sensorSelect = document.getElementById("sensorSelect");
+// main.js
+
+const apiUrl = "https://techo-verde-api-2.onrender.com";
+
+// DOM Elements
 const sensorLabel = document.getElementById("sensorLabel");
-const dashboardView = document.getElementById("dashboardView");
-const historyView = document.getElementById("historyView");
-const menu = document.getElementById("menu");
-const menuBtn = document.getElementById("menuBtn");
+const sensorSelect = document.getElementById("sensorSelect");
+const tableBody = document.getElementById("sensorTableBody");
+const chartCanvas = document.getElementById("sensorChart").getContext("2d");
+const downloadButton = document.getElementById("downloadGraph");
 
-menuBtn.addEventListener("click", () => {
-  menu.classList.toggle("hidden");
-});
+let chart;
 
-menu.querySelectorAll("button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    dashboardView.classList.add("hidden");
-    historyView.classList.add("hidden");
-    document.getElementById(btn.dataset.view + "View").classList.remove("hidden");
-    menu.classList.add("hidden");
-  });
-});
+// Inicialización
+initSensorSelect();
+updateSensor("Sensor1");
 
-async function fetchSensor(sensor) {
-  const res = await fetch(`https://techo-verde-api-2.onrender.com/sensor/${sensor}`);
-  const data = await res.json();
-  return data.datos.reverse();
-}
-
-async function fetchAll() {
-  const res = await fetch(`https://techo-verde-api-2.onrender.com/sensores`);
-  return await res.json();
-}
-
-function renderChart(data, sensor) {
-  const ctx = document.getElementById("sensorChart").getContext("2d");
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: data.map(d => d.timestamp),
-      datasets: [{
-        label: sensor,
-        data: data.map(d => parseFloat(d.valor)),
-        borderColor: "green",
-        tension: 0.1
-      }]
-    },
-    options: {
-      scales: {
-        y: { beginAtZero: true, title: { display: true, text: "°C" } },
-        x: { title: { display: true, text: "Tiempo" } }
-      }
-    }
-  });
-}
-
-function renderTable(data) {
-  const tbody = document.getElementById("sensorTableBody");
-  tbody.innerHTML = data.map(d => \`<tr><td class="p-2 border">\${d.timestamp}</td><td class="p-2 border">\${d.valor}</td></tr>\`).join("");
-}
-
-sensorSelect.addEventListener("change", async (e) => {
-  const sensor = e.target.value;
-  sensorLabel.textContent = sensor.replace("Sensor", "S");
-  const data = await fetchSensor(sensor);
-  renderChart(data, sensor);
-  renderTable(data);
-});
-
-document.getElementById("downloadBtn").addEventListener("click", () => {
-  const a = document.createElement("a");
-  a.href = compareChart.toBase64Image();
-  a.download = "comparativa.png";
-  a.click();
-});
-
-function loadSensorOptions() {
+// --- Funciones ---
+function initSensorSelect() {
   for (let i = 1; i <= 8; i++) {
     const option = document.createElement("option");
-    option.value = \`Sensor\${i}\`;
-    option.textContent = \`Sensor \${i}\`;
+    option.value = `Sensor${i}`;
+    option.textContent = `Sensor ${i}`;
     sensorSelect.appendChild(option);
+  }
+
+  sensorSelect.addEventListener("change", (e) => {
+    updateSensor(e.target.value);
+  });
+}
+
+async function fetchSensorData(sensorId) {
+  try {
+    const response = await fetch(`${apiUrl}/sensor/${sensorId}`);
+    const json = await response.json();
+    return json.datos.reverse();
+  } catch (err) {
+    console.error("Error al obtener datos:", err);
+    return [];
   }
 }
 
-async function renderComparativeChart() {
-  const allData = await fetchAll();
-  const ctx = document.getElementById("compareChart").getContext("2d");
-  if (compareChart) compareChart.destroy();
-  compareChart = new Chart(ctx, {
-    type: "line",
+function updateTable(data) {
+  tableBody.innerHTML = "";
+  data.forEach(({ timestamp, valor }) => {
+    const row = `<tr><td class='border px-4 py-2'>${timestamp}</td><td class='border px-4 py-2'>${valor}</td></tr>`;
+    tableBody.innerHTML += row;
+  });
+}
+
+function updateChart(data, sensorId) {
+  const timestamps = data.map(d => d.timestamp);
+  const valores = data.map(d => parseFloat(d.valor));
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(chartCanvas, {
+    type: 'line',
     data: {
-      labels: allData[0].datos.map(d => d.timestamp),
-      datasets: allData.map((sensor, idx) => ({
-        label: sensor.sensor,
-        data: sensor.datos.map(d => parseFloat(d.valor)),
-        borderColor: \`hsl(\${(idx * 45) % 360}, 70%, 50%)\`,
-        fill: false,
-        tension: 0.1
-      }))
+      labels: timestamps,
+      datasets: [{
+        label: `Sensor ${sensorId}`,
+        data: valores,
+        borderColor: "#22c55e",
+        tension: 0.3,
+        pointRadius: 3,
+        fill: false
+      }]
     },
     options: {
       responsive: true,
-      plugins: { legend: { display: true } },
       scales: {
-        y: { beginAtZero: true },
-        x: { title: { display: true, text: "Tiempo" } }
+        x: { title: { display: true, text: "Tiempo" } },
+        y: { title: { display: true, text: "Valor" }, beginAtZero: true }
       }
     }
   });
 }
 
-loadSensorOptions();
-sensorSelect.value = "Sensor1";
-sensorSelect.dispatchEvent(new Event("change"));
-renderComparativeChart();
+async function updateSensor(sensorId) {
+  sensorLabel.textContent = sensorId.replace("Sensor", "S");
+  const data = await fetchSensorData(sensorId);
+  updateTable(data);
+  updateChart(data, sensorId);
+}
+
+downloadButton.addEventListener("click", () => {
+  if (!chart) return;
+  const link = document.createElement("a");
+  link.href = chart.toBase64Image();
+  link.download = "grafica_sensor.png";
+  link.click();
+});

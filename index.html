@@ -1,47 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Techo Verde - Monitor de Sensores</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="style.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 font-sans p-4">
+<body class="bg-gray-100">
+  <!-- Header -->
   <header class="bg-green-600 text-white p-4 flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-center my-6 text-gray-800">Techo Verde</h1>
-    <button id="menuBtn" class="text-white">☰ Menú</button>
+    <h1 class="text-xl font-bold">Techo Verde</h1>
+    <button id="menuToggle" class="text-white">&#9776; Menú</button>
   </header>
 
-  <nav id="menu" class="hidden bg-white shadow-md p-4 mt-2">
-    <button data-view="dashboard" class="mr-4">Panel Principal</button>
-    <button data-view="history">Historial de Sensores</button>
+  <!-- Menú lateral -->
+  <nav id="sideMenu" class="hidden bg-white w-full md:w-60 p-4 shadow-md md:absolute md:left-0 md:top-16 md:h-screen z-10">
+    <ul>
+      <li><button class="w-full text-left py-2 px-4 hover:bg-gray-200" onclick="showSection('mainPanel')">Panel Principal</button></li>
+      <li><button class="w-full text-left py-2 px-4 hover:bg-gray-200" onclick="showSection('historyPanel')">Historial de Sensores</button></li>
+    </ul>
   </nav>
 
-  <main id="dashboardView" class="mt-4">
-    <h2 class="text-center text-lg font-semibold mb-4">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h2>
-    <div class="flex justify-center mb-4">
-      <select id="sensorSelect" class="p-2 border rounded">
-        <!-- Opciones dinámicas desde JS -->
+  <!-- Panel principal -->
+  <main id="mainPanel" class="p-6">
+    <h2 class="text-center text-xl font-semibold mb-4">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h2>
+
+    <div class="flex justify-center mb-6">
+      <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
+        <!-- Opciones generadas por JS -->
       </select>
     </div>
-    <div class="flex flex-wrap justify-center gap-4">
-      <canvas id="sensorChart" class="bg-white p-2 rounded shadow w-full md:w-[48%]"></canvas>
-      <table class="w-full md:w-[48%] bg-white rounded shadow">
-        <thead><tr class="bg-gray-200"><th class="p-2 border">Timestamp</th><th class="p-2 border">Valor</th></tr></thead>
-        <tbody id="sensorTableBody"></tbody>
-      </table>
+
+    <div class="flex flex-wrap justify-center gap-6">
+      <div class="w-full md:w-1/2">
+        <canvas id="sensorChart" class="bg-white p-4 rounded shadow"></canvas>
+      </div>
+      <div class="w-full md:w-1/2 overflow-x-auto">
+        <table class="w-full bg-white rounded shadow">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border px-4 py-2">Timestamp</th>
+              <th class="border px-4 py-2">Valor</th>
+            </tr>
+          </thead>
+          <tbody id="sensorTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </main>
 
-  <main id="historyView" class="mt-4 hidden">
-    <h2 class="text-center text-lg font-semibold mb-4">Comparativa de Sensores</h2>
-    <canvas id="compareChart" class="bg-white p-4 rounded shadow w-full"></canvas>
-    <div class="flex justify-end mt-2">
-      <button id="downloadBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Descargar Imagen</button>
+  <!-- Comparativa -->
+  <section id="historyPanel" class="hidden p-6">
+    <h2 class="text-xl font-semibold text-center mb-4">Comparativa de Sensores</h2>
+    <canvas id="compareChart" class="bg-white p-4 rounded shadow w-full h-96"></canvas>
+    <div class="flex justify-end mt-4">
+      <button id="downloadBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Descargar Imagen</button>
     </div>
-  </main>
+  </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
