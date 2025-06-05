@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Techo Verde - Monitor de Sensores</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,22 +16,30 @@
       <button id="menuToggle" class="text-white">&#9776; Menú</button>
       <nav id="sideMenu" class="hidden absolute right-4 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
         <ul class="py-1 text-gray-800">
-          <li><button onclick="showSection('resumenPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Resumen</button></li>
-          <li><button onclick="showSection('mainPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Panel Principal</button></li>
-          <li><button onclick="showSection('historyPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Historial de Sensores</button></li>
+          <li>
+            <button onclick="showSection('resumenPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Resumen</button>
+          </li>
+          <li>
+            <button onclick="showSection('mainPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Historial de Sensores</button>
+          </li>
+          <li>
+            <button onclick="showSection('historyPanel')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">Comparativa</button>
+          </li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- Panel Resumen (visible por defecto) -->
+  <!-- Panel Resumen -->
   <section id="resumenPanel" class="p-6">
-    <div id="resumenContainer"></div>
+    <div id="resumenContainer" class="space-y-6"></div>
   </section>
 
-  <!-- Panel Principal (historial individual por sensor) -->
+  <!-- Panel Historial -->
   <main id="mainPanel" class="p-6 hidden">
-    <h2 class="text-center text-xl font-semibold mb-4">Lecturas recientes - Sensor <span id="sensorLabel">S1</span></h2>
+    <h2 class="text-center text-xl font-semibold mb-4">
+      Lecturas recientes - Sensor <span id="sensorLabel">S1</span>
+    </h2>
 
     <div class="flex justify-center mb-6">
       <select id="sensorSelect" class="p-2 border border-gray-300 rounded">
@@ -57,7 +65,7 @@
     </div>
   </main>
 
-  <!-- Comparativa -->
+  <!-- Panel Comparativa -->
   <section id="historyPanel" class="p-6 hidden">
     <h2 class="text-xl font-semibold text-center mb-4">Comparativa de Sensores</h2>
     <canvas id="compareChart" class="bg-white p-4 rounded shadow w-full h-96"></canvas>
