@@ -10,6 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const chartCanvas = document.getElementById("sensorChart").getContext("2d");
   const downloadButton = document.getElementById("downloadGraph");
 
+  const menuToggle = document.getElementById("menuToggle");
+  const sideMenu = document.getElementById("sideMenu");
+
+  if (menuToggle && sideMenu) {
+    menuToggle.addEventListener("click", () => {
+      sideMenu.classList.toggle("hidden");
+    });
+  }
+  
   let chart;
 
   // Inicialización
