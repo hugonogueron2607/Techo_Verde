@@ -40,7 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function updateTable(data) {
+   function updateTable(data) {
+    if (!tableBody) return;
     tableBody.innerHTML = "";
     data.forEach(({ timestamp, valor }) => {
       const row = `<tr><td class='border px-4 py-2'>${timestamp}</td><td class='border px-4 py-2'>${valor}</td></tr>`;
@@ -49,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateChart(data, sensorId) {
+    if (!chartCanvas) return;
     const timestamps = data.map(d => d.timestamp);
     const valores = data.map(d => parseFloat(d.valor));
 
@@ -78,7 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function updateSensor(sensorId) {
-    sensorLabel.textContent = sensorId.replace("Sensor", "S");
+    if (sensorLabel) {
+      sensorLabel.textContent = sensorId.replace("Sensor", "S");
+    }
     const data = await fetchSensorData(sensorId);
     updateTable(data);
     updateChart(data, sensorId);
@@ -94,12 +98,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Manejador de cambio de secciones
-  window.showSection = function (sectionId) {
-    const sections = document.querySelectorAll(".view-section");
-    sections.forEach(section => {
-      section.classList.add("hidden");
-    });
-    document.getElementById(sectionId)?.classList.remove("hidden");
-  };
+  function showSection(id) {
+    document.querySelectorAll(".seccion").forEach(sec => sec.classList.add("hidden"));
+    const selected = document.getElementById(id);
+    if (selected) selected.classList.remove("hidden");
+  }
+
+  // Hacer accesible globalmente para onclick=""
+  window.showSection = showSection;
+
+  // Iniciar app
+  initSensorSelect();
+  updateSensor("Sensor1");
 });
