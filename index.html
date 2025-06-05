@@ -11,12 +11,23 @@
   <!-- Header -->
   <header class="bg-green-600 text-white p-4 flex justify-between items-center shadow">
     <h1 class="text-2xl font-bold">Techo Verde</h1>
-    <button id="menuToggle" class="text-white hover:text-gray-300">&#9776; Menú</button>
+
+
+
+    <div class="relative inline-block text-left">
+      <button id="menuToggle" class="text-white">&#9776; Menú</button>
+      <nav id="sideMenu" class="hidden absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+        <ul class="py-1">
+          <li><button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" onclick="showSection('mainPanel')">Panel Principal</button></li>
+          <li><button class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100" onclick="showSection('historyPanel')">Historial de Sensores</button></li>
+        </ul>
+      </nav>
+    </div>
+
   </header>
 
   <!-- Sidebar Menu -->
-  <nav id="sideMenu" class="hidden md:block bg-white w-full md:w-64 p-4 shadow-md absolute md:relative top-0 z-20">
-    <ul class="space-y-2">
+      <ul class="space-y-2">
       <li><button onclick="showSection('mainPanel')" class="w-full text-left px-4 py-2 rounded hover:bg-gray-200">Panel Principal</button></li>
       <li><button onclick="showSection('historyPanel')" class="w-full text-left px-4 py-2 rounded hover:bg-gray-200">Historial de Sensores</button></li>
     </ul>
