@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sideMenu.classList.toggle("hidden");
     });
   }
-  
+
   let chart;
 
   // Inicialización
@@ -107,11 +107,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function showSection(id) {
-    document.querySelectorAll(".seccion").forEach(sec => sec.classList.add("hidden"));
-    const selected = document.getElementById(id);
-    if (selected) selected.classList.remove("hidden");
+  // Mostrar la sección seleccionada
+  function showSection(sectionId) {
+    const sections = ["mainPanel", "historyPanel"];
+    sections.forEach(id => {
+      document.getElementById(id).classList.add("hidden");
+    });
+    document.getElementById(sectionId).classList.remove("hidden");
+
+  // Ocultar el menú después de hacer clic
+    const menu = document.getElementById("dropdownMenu");
+    if (menu) menu.classList.add("hidden");
   }
+
 
   // Hacer accesible globalmente para onclick=""
   window.showSection = showSection;
