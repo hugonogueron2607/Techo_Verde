@@ -84,10 +84,23 @@ async function updateSensor(sensorId) {
   updateChart(data, sensorId);
 }
 
-downloadButton.addEventListener("click", () => {
-  if (!chart) return;
-  const link = document.createElement("a");
-  link.href = chart.toBase64Image();
-  link.download = "grafica_sensor.png";
-  link.click();
-});
+if (downloadButton) {
+  downloadButton.addEventListener("click", () => {
+    if (!chart) return;
+    const link = document.createElement("a");
+    link.href = chart.toBase64Image();
+    link.download = "grafica_sensor.png";
+    link.click();
+  });
+}
+
+// Función global para cambiar secciones desde HTML
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(section => {
+    section.classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
+}
+
+// Hacerla global
+window.showSection = showSection;
