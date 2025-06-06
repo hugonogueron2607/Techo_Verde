@@ -24,20 +24,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let chart;
   let compareChart;
 
-  function showSection(sectionId) {
-    const sections = ["resumenPanel", "mainPanel", "historyPanel"];
-    sections.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add("hidden");
-    });
-    const target = document.getElementById(sectionId);
-    if (target) target.classList.remove("hidden");
-    if (sideMenu) sideMenu.classList.add("hidden");
-
-    if (sectionId === "historyPanel") {
-      initComparativa();
-    }
+function showSection(sectionId) {
+  const sections = ["resumenPanel", "mainPanel", "historyPanel"];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("hidden");
+  });
+  const target = document.getElementById(sectionId);
+  if (target) {
+    target.classList.remove("hidden");
+    if (sectionId === "historyPanel") renderComparativeChart(); // ← esta línea es clave
   }
+}
+
 
   window.showSection = showSection;
 
