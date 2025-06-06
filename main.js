@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sensorSelect = document.getElementById("sensorSelect");
   const tableBody = document.getElementById("sensorTableBody");
   const chartCanvas = document.getElementById("sensorChart")?.getContext("2d");
+  const compareChartCanvas = document.getElementById("compareChart")?.getContext("2d");
   const downloadButton = document.getElementById("downloadBtn");
   const resumenContainer = document.getElementById("resumenContainer");
 
@@ -32,6 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const target = document.getElementById(sectionId);
     if (target) target.classList.remove("hidden");
     if (sideMenu) sideMenu.classList.add("hidden");
+
+    if (sectionId === "historyPanel") {
+      initComparativa();
+    }
   }
 
   window.showSection = showSection;
@@ -201,6 +206,43 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     if (resumenContainer) resumenContainer.innerHTML = html;
+  }
+
+  async function initComparativa() {
+    if (!compareChartCanvas) return;
+    const sensores = await fetchAllSensors();
+    const colores = ['#22c55e', '#3b82f6', '#f97316', '#ec4899', '#a855f7', '#14b8a6', '#f59e0b', '#ef4444'];
+
+    const datasets = sensores.map((sensor, i) => ({
+      label: sensor.sensor,
+      data: sensor.datos.map(d => parseFloat(d.valor)),
+      borderColor: colores[i % colores.length],
+      tension: 0.3,
+      pointRadius: 0,
+      fill: false
+    }));
+
+    const etiquetas = sensores[0]?.datos.map(d => d.timestamp) || [];
+
+    if (compareChart) compareChart.destroy();
+
+    compareChart = new Chart(compareChartCanvas, {
+      type: 'line',
+      data: {
+        labels: etiquetas,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Tiempo' } },
+          y: { title: { display: true, text: 'Valor' }, beginAtZero: true }
+        }
+      }
+    });
   }
 
   // Inicialización general
