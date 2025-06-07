@@ -42,7 +42,7 @@ function showSection(sectionId) {
 
   if (sideMenu) sideMenu.classList.add("hidden");
 }
-
+ 
 
   window.showSection = showSection;
 
@@ -147,7 +147,111 @@ function showSection(sectionId) {
     });
   }
 
-  async function initResumenPanel() {
+  async function initComparativa() {
+    if (!compareChartCanvas) return;
+    const sensores = await fetchAllSensors();
+    const colores = ['#22c55e', '#3b82f6', '#f97316', '#ec4899', '#a855f7', '#14b8a6', '#f59e0b', '#ef4444'];
+
+    const datasets = sensores.map((sensor, i) => ({
+      label: sensor.sensor,
+      data: sensor.datos.map(d => parseFloat(d.valor)),
+      borderColor: colores[i % colores.length],
+      tension: 0.3,
+      pointRadius: 0,
+      fill: false
+    }));
+
+    const etiquetas = sensores[0]?.datos.map(d => d.timestamp) || [];
+
+    if (compareChart) compareChart.destroy();
+
+    compareChart = new Chart(compareChartCanvas, {
+      type: 'line',
+      data: {
+        labels: etiquetas,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Tiempo' } },
+          y: { title: { display: true, text: 'Valor' }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  async function renderComparativeChart() {
+    const ctx = document.getElementById("compareChart")?.getContext("2d");
+    if (!ctx) {
+      console.warn("⚠️ No se encontró el canvas de la comparativa.");
+      return;
+    }
+
+    const sensores = await fetchAllSensors();
+    const datasets = [];
+    let labels = [];
+
+  sensores.forEach((sensor, index) => {
+    const color = `hsl(${(index * 360) / sensores.length}, 70%, 50%)`;
+
+    const timestamps = sensor.datos.map(d => d.timestamp);
+    const valores = sensor.datos.map(d => parseFloat(d.valor));
+
+    if (timestamps.length > labels.length) {
+      labels = timestamps;
+    }
+
+    datasets.push({
+      label: sensor.sensor,
+      data: valores,
+      borderColor: color,
+      backgroundColor: color,
+      fill: false,
+      tension: 0.2
+    });
+  });
+
+  if (compareChart) {
+    compareChart.destroy();
+  }
+
+  compareChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Tiempo"
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Valor"
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+async function initResumenPanel() {
     const sensores = await fetchAllSensors();
     const extras = await fetchExtras();
 
@@ -213,109 +317,6 @@ function showSection(sectionId) {
     if (resumenContainer) resumenContainer.innerHTML = html;
   }
 
-  async function initComparativa() {
-    if (!compareChartCanvas) return;
-    const sensores = await fetchAllSensors();
-    const colores = ['#22c55e', '#3b82f6', '#f97316', '#ec4899', '#a855f7', '#14b8a6', '#f59e0b', '#ef4444'];
-
-    const datasets = sensores.map((sensor, i) => ({
-      label: sensor.sensor,
-      data: sensor.datos.map(d => parseFloat(d.valor)),
-      borderColor: colores[i % colores.length],
-      tension: 0.3,
-      pointRadius: 0,
-      fill: false
-    }));
-
-    const etiquetas = sensores[0]?.datos.map(d => d.timestamp) || [];
-
-    if (compareChart) compareChart.destroy();
-
-    compareChart = new Chart(compareChartCanvas, {
-      type: 'line',
-      data: {
-        labels: etiquetas,
-        datasets: datasets
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' }
-        },
-        scales: {
-          x: { title: { display: true, text: 'Tiempo' } },
-          y: { title: { display: true, text: 'Valor' }, beginAtZero: true }
-        }
-      }
-    });
-  }
-  
-  async function renderComparativeChart() {
-  const ctx = document.getElementById("compareChart")?.getContext("2d");
-  if (!ctx) {
-    console.warn("⚠️ No se encontró el canvas de la comparativa.");
-    return;
-  }
-
-  const sensores = await fetchAllSensors();
-  const datasets = [];
-  let labels = [];
-
-  sensores.forEach((sensor, index) => {
-    const color = `hsl(${(index * 360) / sensores.length}, 70%, 50%)`;
-
-    const timestamps = sensor.datos.map(d => d.timestamp);
-    const valores = sensor.datos.map(d => parseFloat(d.valor));
-
-    if (timestamps.length > labels.length) {
-      labels = timestamps;
-    }
-
-    datasets.push({
-      label: sensor.sensor,
-      data: valores,
-      borderColor: color,
-      backgroundColor: color,
-      fill: false,
-      tension: 0.2
-    });
-  });
-
-  if (compareChart) {
-    compareChart.destroy();
-  }
-
-  compareChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          display: true
-        }
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Tiempo"
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: "Valor"
-          },
-          beginAtZero: true
-        }
-      }
-    }
-  });
-}
 
   // Inicialización general
   initSensorSelect();
