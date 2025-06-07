@@ -279,7 +279,7 @@ async function initResumenPanel() {
             <tr>
               <th class="border px-4 py-2">Sensor</th>
               <th class="border px-4 py-2">Valor</th>
-              <th class="border px-4 py-2">Hora</th>
+              <th class="border px-4 py-2">Fecha y Hora</th>
             </tr>
           </thead>
           <tbody>
