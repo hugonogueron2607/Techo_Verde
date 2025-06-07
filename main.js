@@ -89,8 +89,11 @@ function showSection(sectionId) {
 
   function updateChart(data, sensorId) {
     if (!chartCanvas) return;
-    const timestamps = data.map(d => d.timestamp);
-    const valores = data.map(d => parseFloat(d.valor));
+
+    const datosOrdenCronologico = [...data].reverse();
+
+    const timestamps = datosOrdenCronologico.map(d => d.timestamp);
+    const valores = datosOrdenCronologico.map(d => parseFloat(d.valor));
 
     if (chart) chart.destroy();
 
