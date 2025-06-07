@@ -35,13 +35,10 @@ function showSection(sectionId) {
   if (target) target.classList.remove("hidden");
 
   // Ejecutar comparativa solo si se entra a ese panel
-  if (sectionId === "historyPanel") {
-    renderComparativeChart(); // << ACTIVA la gráfica
-    console.log("Generando gráfica comparativa...");
-  }
-
   if (sectionId === "mainPanel"){
-    updateSensor("Sensor1")
+    updateSensor("Sensor1");
+  } else if (sectionId === "historyPanel"){
+    renderComparativeChart();
   }
 
   if (sideMenu) sideMenu.classList.add("hidden");
@@ -324,7 +321,6 @@ async function initResumenPanel() {
 
   // Inicialización general
   initSensorSelect();
-  updateSensor("Sensor1");
   initResumenPanel();
   showSection("resumenPanel");
 });
