@@ -40,6 +40,10 @@ function showSection(sectionId) {
     console.log("Generando gráfica comparativa...");
   }
 
+  if (sectionId === "mainPanel"){
+    updateSensor("Sensor1")
+  }
+
   if (sideMenu) sideMenu.classList.add("hidden");
 }
  
