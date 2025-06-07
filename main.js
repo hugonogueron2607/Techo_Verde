@@ -30,11 +30,17 @@ function showSection(sectionId) {
     const el = document.getElementById(id);
     if (el) el.classList.add("hidden");
   });
+
   const target = document.getElementById(sectionId);
-  if (target) {
-    target.classList.remove("hidden");
-    if (sectionId === "historyPanel") renderComparativeChart(); // ← esta línea es clave
+  if (target) target.classList.remove("hidden");
+
+  // Ejecutar comparativa solo si se entra a ese panel
+  if (sectionId === "historyPanel") {
+    renderComparativeChart(); // << ACTIVA la gráfica
+    console.log("Generando gráfica comparativa...");
   }
+
+  if (sideMenu) sideMenu.classList.add("hidden");
 }
 
 
