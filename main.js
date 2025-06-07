@@ -249,7 +249,7 @@ function showSection(sectionId) {
       }
     });
   }
-
+  
   async function renderComparativeChart() {
   const ctx = document.getElementById("compareChart")?.getContext("2d");
   if (!ctx) {
@@ -316,7 +316,6 @@ function showSection(sectionId) {
     }
   });
 }
-
 
   // Inicialización general
   initSensorSelect();
