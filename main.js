@@ -189,7 +189,8 @@ function showSection(sectionId) {
         }
       }
     });
-    for (let i=1; i <= 6; i++){
+    
+    for (let i=1; i <= 6; i++) {
       compareChart.hide(i);
     }
   }
