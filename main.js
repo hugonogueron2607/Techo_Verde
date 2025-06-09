@@ -194,7 +194,7 @@ function showSection(sectionId) {
 
   if (compareChart) compareChart.destroy();
 
-  compareChart = new Chart(compareChartCanvas, {
+  compareChart = new chart(compareChartCanvas, {
     type: 'line',
     data: {
       labels: etiquetas,
