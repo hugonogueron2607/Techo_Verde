@@ -200,7 +200,7 @@ async function initComparativa() {
 
     if (compareChart) compareChart.destroy();
 
-    compareChart = new Chart(compareChartCanvas, {
+    compareChart = new chart(compareChartCanvas, {
       type: 'line',
       data: {
         labels: etiquetas,
@@ -233,47 +233,6 @@ async function initComparativa() {
 }
 
 
-  // async function initComparativa() {
-  //   if (!compareChartCanvas) return;
-
-  //   const sensores = await fetchAllSensors();
-  //   const colores = ['#22c55e', '#3b82f6', '#f97316', '#ec4899', '#a855f7', '#14b8a6', '#f59e0b', '#ef4444'];
-
-  //   const datasets = sensores.map((sensor, i) => ({
-  //     label: sensor.sensor,
-  //     data: sensor.datos.map(d => parseFloat(d.valor)),
-  //     borderColor: colores[i % colores.length],
-  //     tension: 0.3,
-  //     pointRadius: 0,
-  //     fill: false
-  //   }));
-
-  //   const etiquetas = sensores[0]?.datos.map(d => d.timestamp) || [];
-
-  //   if (compareChart) compareChart.destroy();
-
-  //   compareChart = new ChannelMergerNode
-    
-  //   rt(compareChartCanvas, {
-  //     type: 'line',
-  //     data: {
-  //       labels: etiquetas,
-  //       datasets: datasets
-  //     },
-  //     options: {
-  //       responsive: true,
-  //       plugins: {
-  //         legend: {
-  //           position: 'top'
-  //         }
-  //       },
-  //       scales: {
-  //         x: { title: { display: true, text: 'Tiempo' } },
-  //         y: { title: { display: true, text: 'Temperatura' }, beginAtZero: true }
-  //       }
-  //     }
-  //   });
-  // }
 
   async function renderComparativeChart() {
     const ctx = document.getElementById("compareChart")?.getContext("2d");
