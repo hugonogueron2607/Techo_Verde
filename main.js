@@ -189,7 +189,7 @@ function showSection(sectionId) {
         }
       }
     });
-    
+
     for (let i=1; i <= 6; i++) {
       compareChart.hide(i);
     }
@@ -253,7 +253,7 @@ function showSection(sectionId) {
         y: {
           title: {
             display: true,
-            text: "Valor"
+            text: "Temperatura"
           },
           beginAtZero: true
         }
