@@ -153,6 +153,7 @@ function showSection(sectionId) {
 
   async function initComparativa() {
     if (!compareChartCanvas) return;
+
     const sensores = await fetchAllSensors();
     const colores = ['#22c55e', '#3b82f6', '#f97316', '#ec4899', '#a855f7', '#14b8a6', '#f59e0b', '#ef4444'];
 
@@ -162,7 +163,8 @@ function showSection(sectionId) {
       borderColor: colores[i % colores.length],
       tension: 0.3,
       pointRadius: 0,
-      fill: false
+      fill: false,
+      hidden: !(i == 0 || i == 7)
     }));
 
     const etiquetas = sensores[0]?.datos.map(d => d.timestamp) || [];
@@ -178,7 +180,12 @@ function showSection(sectionId) {
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'top' }
+          legend: {
+            position: 'top',
+            labels: {
+             filter: item => item.text !== undefined
+            }
+          }
         },
         scales: {
           x: { title: { display: true, text: 'Tiempo' } },
