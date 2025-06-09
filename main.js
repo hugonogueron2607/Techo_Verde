@@ -30,19 +30,39 @@ function showSection(sectionId) {
     const el = document.getElementById(id);
     if (el) el.classList.add("hidden");
   });
-
   const target = document.getElementById(sectionId);
-  if (target) target.classList.remove("hidden");
+  if (target) {
+    target.classList.remove("hidden");
 
-  // Ejecutar comparativa solo si se entra a ese panel
-  if (sectionId === "mainPanel"){
-    updateSensor("Sensor1");
-  } else if (sectionId === "historyPanel"){
-    renderComparativeChart();
+    // Llama a la función de inicialización solo si se activa la comparativa
+    if (sectionId === "historyPanel") {
+      initComparativa();
+    }
   }
 
   if (sideMenu) sideMenu.classList.add("hidden");
 }
+
+
+// function showSection(sectionId) {
+//   const sections = ["resumenPanel", "mainPanel", "historyPanel"];
+//   sections.forEach(id => {
+//     const el = document.getElementById(id);
+//     if (el) el.classList.add("hidden");
+//   });
+
+//   const target = document.getElementById(sectionId);
+//   if (target) target.classList.remove("hidden");
+
+//   // Ejecutar comparativa solo si se entra a ese panel
+//   if (sectionId === "mainPanel"){
+//     updateSensor("Sensor1");
+//   } else if (sectionId === "historyPanel"){
+//     renderComparativeChart();
+//   }
+
+//   if (sideMenu) sideMenu.classList.add("hidden");
+// }
  
 
   window.showSection = showSection;
@@ -170,7 +190,9 @@ function showSection(sectionId) {
 
     if (compareChart) compareChart.destroy();
 
-    compareChart = new chart(compareChartCanvas, {
+    compareChart = new ChannelMergerNode
+    
+    rt(compareChartCanvas, {
       type: 'line',
       data: {
         labels: etiquetas,
