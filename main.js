@@ -189,7 +189,7 @@ function showSection(sectionId) {
         },
         scales: {
           x: { title: { display: true, text: 'Tiempo' } },
-          y: { title: { display: true, text: 'Valor' }, beginAtZero: true }
+          y: { title: { display: true, text: 'Temperatura' }, beginAtZero: true }
         }
       }
     });
