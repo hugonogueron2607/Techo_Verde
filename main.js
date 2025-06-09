@@ -163,8 +163,7 @@ function showSection(sectionId) {
       borderColor: colores[i % colores.length],
       tension: 0.3,
       pointRadius: 0,
-      fill: false,
-      hidden: !(i == 0 || i == 7)
+      fill: false
     }));
 
     const etiquetas = sensores[0]?.datos.map(d => d.timestamp) || [];
@@ -181,10 +180,7 @@ function showSection(sectionId) {
         responsive: true,
         plugins: {
           legend: {
-            position: 'top',
-            labels: {
-             filter: item => item.text !== undefined
-            }
+            position: 'top'
           }
         },
         scales: {
@@ -193,6 +189,9 @@ function showSection(sectionId) {
         }
       }
     });
+    for (let i=1; i <= 6; i++){
+      compareChart.hide(i);
+    }
   }
 
   async function renderComparativeChart() {
