@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  let chart;
+  let Chart;
   let compareChart;
 
 function showSection(sectionId) {
