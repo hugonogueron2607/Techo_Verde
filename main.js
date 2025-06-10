@@ -102,7 +102,7 @@ function showSection(sectionId) {
       data: {
         labels: timestamps,
         datasets: [{
-          label: `Sensor ${sensorId}`,
+          label: `${sensorId}`,
           data: valores,
           borderColor: "#22c55e",
           tension: 0.3,
@@ -122,7 +122,7 @@ function showSection(sectionId) {
 
   async function updateSensor(sensorId) {
     if (sensorLabel) {
-      sensorLabel.textContent = sensorId.replace("Sesor", "S");
+      sensorLabel.textContent = sensorId.replace("Sensor", "S");
     }
     const data = await fetchSensorData(sensorId);
     updateTable(data);
