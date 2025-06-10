@@ -98,7 +98,7 @@ function showSection(sectionId) {
 
     if (chart) chart.destroy();
 
-    chart = new Chart(chartCanvas, {
+    chart = new chart(chartCanvas, {
       type: 'line',
       data: {
         labels: timestamps,
@@ -181,7 +181,7 @@ function showSection(sectionId) {
 
       if (compareChart) compareChart.destroy();
 
-      compareChart = new Chart(compareChartCanvas, {
+      compareChart = new chart(compareChartCanvas, {
         type: 'line',
         data: {
           labels: etiquetas,
@@ -250,7 +250,7 @@ function showSection(sectionId) {
     compareChart.destroy();
   }
 
-  compareChart = new Chart(ctx, {
+  compareChart = new chart(ctx, {
     type: "line",
     data: {
       labels,
