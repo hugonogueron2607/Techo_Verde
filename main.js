@@ -39,7 +39,7 @@ function showSection(sectionId) {
   if (sectionId === "mainPanel"){
     updateSensor("Sensor1");
   } else if (sectionId === "historyPanel"){
-    renderComparativeChart();
+    initComparativa();
   }
 
   if (sideMenu) sideMenu.classList.add("hidden");
