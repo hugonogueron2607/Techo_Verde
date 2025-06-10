@@ -24,45 +24,26 @@ document.addEventListener("DOMContentLoaded", () => {
   let chart;
   let compareChart;
 
+
 function showSection(sectionId) {
   const sections = ["resumenPanel", "mainPanel", "historyPanel"];
   sections.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.add("hidden");
   });
-  const target = document.getElementById(sectionId);
-  if (target) {
-    target.classList.remove("hidden");
 
-    // Llama a la función de inicialización solo si se activa la comparativa
-    if (sectionId === "historyPanel") {
-      initComparativa();
-    }
+  const target = document.getElementById(sectionId);
+  if (target) target.classList.remove("hidden");
+
+  // Ejecutar comparativa solo si se entra a ese panel
+  if (sectionId === "mainPanel"){
+    updateSensor("Sensor1");
+  } else if (sectionId === "historyPanel"){
+    renderComparativeChart();
   }
 
   if (sideMenu) sideMenu.classList.add("hidden");
 }
-
-
-// function showSection(sectionId) {
-//   const sections = ["resumenPanel", "mainPanel", "historyPanel"];
-//   sections.forEach(id => {
-//     const el = document.getElementById(id);
-//     if (el) el.classList.add("hidden");
-//   });
-
-//   const target = document.getElementById(sectionId);
-//   if (target) target.classList.remove("hidden");
-
-//   // Ejecutar comparativa solo si se entra a ese panel
-//   if (sectionId === "mainPanel"){
-//     updateSensor("Sensor1");
-//   } else if (sectionId === "historyPanel"){
-//     renderComparativeChart();
-//   }
-
-//   if (sideMenu) sideMenu.classList.add("hidden");
-// }
  
 
   window.showSection = showSection;
@@ -117,7 +98,7 @@ function showSection(sectionId) {
 
     if (chart) chart.destroy();
 
-    chart = new Chart(chartCanvas, {
+    chart = new chart(chartCanvas, {
       type: 'line',
       data: {
         labels: timestamps,
