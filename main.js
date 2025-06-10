@@ -181,7 +181,7 @@ function showSection(sectionId) {
 
       if (compareChart) compareChart.destroy();
 
-      compareChart = new chart(compareChartCanvas, {
+      compareChart = new Chart(compareChartCanvas, {
         type: 'line',
         data: {
           labels: etiquetas,
@@ -215,72 +215,72 @@ function showSection(sectionId) {
 
 
 
-  async function renderComparativeChart() {
-    const ctx = document.getElementById("compareChart")?.getContext("2d");
-    if (!ctx) {
-      console.warn("⚠️ No se encontró el canvas de la comparativa.");
-      return;
-    }
+//   async function renderComparativeChart() {
+//     const ctx = document.getElementById("compareChart")?.getContext("2d");
+//     if (!ctx) {
+//       console.warn("⚠️ No se encontró el canvas de la comparativa.");
+//       return;
+//     }
 
-    const sensores = await fetchAllSensors();
-    const datasets = [];
-    let labels = [];
+//     const sensores = await fetchAllSensors();
+//     const datasets = [];
+//     let labels = [];
 
-  sensores.forEach((sensor, index) => {
-    const color = `hsl(${(index * 360) / sensores.length}, 70%, 50%)`;
+//   sensores.forEach((sensor, index) => {
+//     const color = `hsl(${(index * 360) / sensores.length}, 70%, 50%)`;
 
-    const timestamps = sensor.datos.map(d => d.timestamp);
-    const valores = sensor.datos.map(d => parseFloat(d.valor));
+//     const timestamps = sensor.datos.map(d => d.timestamp);
+//     const valores = sensor.datos.map(d => parseFloat(d.valor));
 
-    if (timestamps.length > labels.length) {
-      labels = timestamps;
-    }
+//     if (timestamps.length > labels.length) {
+//       labels = timestamps;
+//     }
 
-    datasets.push({
-      label: sensor.sensor,
-      data: valores,
-      borderColor: color,
-      backgroundColor: color,
-      fill: false,
-      tension: 0.2
-    });
-  });
+//     datasets.push({
+//       label: sensor.sensor,
+//       data: valores,
+//       borderColor: color,
+//       backgroundColor: color,
+//       fill: false,
+//       tension: 0.2
+//     });
+//   });
 
-  if (compareChart) {
-    compareChart.destroy();
-  }
+//   if (compareChart) {
+//     compareChart.destroy();
+//   }
 
-  compareChart = new chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          display: true
-        }
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Tiempo"
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: "Temperatura"
-          },
-          beginAtZero: true
-        }
-      }
-    }
-  });
-}
+//   compareChart = new chart(ctx, {
+//     type: "line",
+//     data: {
+//       labels,
+//       datasets
+//     },
+//     options: {
+//       responsive: true,
+//       plugins: {
+//         legend: {
+//           display: true
+//         }
+//       },
+//       scales: {
+//         x: {
+//           title: {
+//             display: true,
+//             text: "Tiempo"
+//           }
+//         },
+//         y: {
+//           title: {
+//             display: true,
+//             text: "Temperatura"
+//           },
+//           beginAtZero: true
+//         }
+//       }
+//     }
+//   });
+// }
 
 async function initResumenPanel() {
     const sensores = await fetchAllSensors();
