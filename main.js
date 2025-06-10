@@ -98,7 +98,7 @@ function showSection(sectionId) {
 
     if (chart) chart.destroy();
 
-    chart = new chart(chartCanvas, {
+    chart = new Chart(chartCanvas, {
       type: 'line',
       data: {
         labels: timestamps,
