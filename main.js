@@ -122,7 +122,7 @@ function showSection(sectionId) {
 
   async function updateSensor(sensorId) {
     if (sensorLabel) {
-      sensorLabel.textContent = sensorId.replace("Sensor", "S");
+      sensorLabel.textContent = sensorId.replace("Sesor", "S");
     }
     const data = await fetchSensorData(sensorId);
     updateTable(data);
