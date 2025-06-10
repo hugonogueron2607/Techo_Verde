@@ -114,7 +114,7 @@ function showSection(sectionId) {
         responsive: true,
         scales: {
           x: { title: { display: true, text: "Tiempo" } },
-          y: { title: { display: true, text: "Temperatura" }, beginAtZero: true }
+          y: { title: { display: true, text: "Temperatura" } }
         }
       }
     });
