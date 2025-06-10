@@ -44,7 +44,6 @@ function showSection(sectionId) {
 
   if (sideMenu) sideMenu.classList.add("hidden");
 }
- 
 
   window.showSection = showSection;
 
