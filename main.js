@@ -200,7 +200,7 @@ async function initComparativa() {
 
     if (compareChart) compareChart.destroy();
 
-    compareChart = new chart(compareChartCanvas, {
+    compareChart = new Chart(compareChartCanvas, {
       type: 'line',
       data: {
         labels: etiquetas,
