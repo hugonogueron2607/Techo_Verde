@@ -98,7 +98,7 @@ function showSection(sectionId) {
 
     if (chart) chart.destroy();
 
-    chart = new chart(chartCanvas, {
+    chart = new Chart(chartCanvas, {
       type: 'line',
       data: {
         labels: timestamps,
@@ -115,7 +115,7 @@ function showSection(sectionId) {
         responsive: true,
         scales: {
           x: { title: { display: true, text: "Tiempo" } },
-          y: { title: { display: true, text: "Valor" }, beginAtZero: true }
+          y: { title: { display: true, text: "Temperatura" }, beginAtZero: true }
         }
       }
     });
