@@ -45,7 +45,20 @@ function showSection(sectionId) {
   if (sideMenu) sideMenu.classList.add("hidden");
 }
 
-  window.showSection = showSection;
+  window.showSection = function (sectionId) {
+  const sections = ["resumenPanel", "mainPanel", "historyPanel"];
+  sections.forEach(id => {
+    const panel = document.getElementById(id);
+    if (panel) panel.classList.add("hidden");
+  });
+
+  const target = document.getElementById(sectionId);
+  if (target) target.classList.remove("hidden");
+
+  if (sectionId === "resumenPanel") initResumenPanel();
+  if (sideMenu) sideMenu.classList.add("hidden");
+};
+
 
   async function fetchSensorData(sensorId) {
     try {
