@@ -38,7 +38,6 @@ function showSection(sectionId) {
   if (sectionId === "resumenPanel") {
     initResumenPanel();
   } else if (sectionId === "mainPanel") {
-    updateChart();
     updateSensor("Sensor1");
   } else if (sectionId === "historyPanel") {
     initComparativa();
