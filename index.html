@@ -30,11 +30,48 @@
     </div>
   </header>
   <!-- Panel Resumen -->
-  <section id="resumenPanel" class="p-6">
-    <div id="resumenContainer" class="space-y-6"></div>
-  </section>
 
-  <!-- Panel Historial -->
+<h2 class="text-xl font-bold mb-4 text-center">Resumen de Sensores</h2>
+<div id="tablaSensores" class="overflow-x-auto">
+  <table class="min-w-full bg-white shadow-md rounded">
+    <thead class="bg-gray-200">
+      <tr>
+        <th class="border px-4 py-2">Sensor</th>
+        <th class="border px-4 py-2">Valor</th>
+        <th class="border px-4 py-2">Fecha y Hora</th>
+      </tr>
+    </thead>
+    <tbody id="tbodySensores">
+      <!-- Aquí se insertan filas desde JS -->
+    </tbody>
+  </table>
+</div>
+
+<h2 class="text-xl font-bold mt-8 mb-4 text-center">Estado del Sistema</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+  <div class="bg-white p-4 rounded shadow">
+    <div class="text-sm text-gray-500">Voltaje Panel</div>
+    <div class="text-xl" id="voltajePanel">-- V</div>
+  </div>
+  <div class="bg-white p-4 rounded shadow">
+    <div class="text-sm text-gray-500">Voltaje Batería</div>
+    <div class="text-xl" id="voltajeBateria">-- V</div>
+  </div>
+  <div class="bg-white p-4 rounded shadow">
+    <div class="text-sm text-gray-500">% Batería</div>
+    <div class="text-xl" id="porcentajeBateria">--%</div>
+  </div>
+  <div class="bg-white p-4 rounded shadow">
+    <div class="text-sm text-gray-500">% Panel Solar</div>
+    <div class="text-xl" id="porcentajePanel">--%</div>
+  </div>
+</div>
+
+  <!-- <section id="resumenPanel" class="p-6">
+    <div id="resumenContainer" class="space-y-6"></div>
+  </section> -->
+
+  Panel Historial
   <main id="mainPanel" class="p-6 hidden">
     <h2 class="text-center text-xl font-semibold mb-4">
       Lecturas recientes - Sensor <span id="sensorLabel"></span>
