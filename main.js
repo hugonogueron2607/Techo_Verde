@@ -24,28 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let chart;
   let compareChart;
 
-
 function showSection(sectionId) {
-  const sections = ["resumenPanel", "mainPanel", "historyPanel"];
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add("hidden");
-  });
-
-  const target = document.getElementById(sectionId);
-  if (target) target.classList.remove("hidden");
-
-  // Ejecutar comparativa solo si se entra a ese panel
-  if (sectionId === "mainPanel"){
-    updateSensor("Sensor1");
-  } else if (sectionId === "historyPanel"){
-    initComparativa();
-  }
-
-  if (sideMenu) sideMenu.classList.add("hidden");
-}
-
-  window.showSection = function (sectionId) {
   const sections = ["resumenPanel", "mainPanel", "historyPanel"];
   sections.forEach(id => {
     const panel = document.getElementById(id);
@@ -55,10 +34,20 @@ function showSection(sectionId) {
   const target = document.getElementById(sectionId);
   if (target) target.classList.remove("hidden");
 
-  if (sectionId === "resumenPanel") initResumenPanel();
-  if (sideMenu) sideMenu.classList.add("hidden");
-};
+  // Ejecuta función específica según el panel mostrado
+  if (sectionId === "resumenPanel") {
+    initResumenPanel();
+  } else if (sectionId === "mainPanel") {
+    updateSensor("Sensor1");
+  } else if (sectionId === "historyPanel") {
+    initComparativa();
+  }
 
+  if (sideMenu) sideMenu.classList.add("hidden");
+}
+
+// Hacer la función accesible globalmente
+window.showSection = showSection;
 
   async function fetchSensorData(sensorId) {
     try {
