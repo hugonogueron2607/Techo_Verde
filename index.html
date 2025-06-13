@@ -29,43 +29,6 @@
       </nav>
     </div>
   </header>
-  <!-- Panel Resumen -->
-
-<h2 class="text-xl font-bold mb-4 text-center">Resumen de Sensores</h2>
-<div id="tablaSensores" class="overflow-x-auto">
-  <table class="min-w-full bg-white shadow-md rounded">
-    <thead class="bg-gray-200">
-      <tr>
-        <th class="border px-4 py-2">Sensor</th>
-        <th class="border px-4 py-2">Temperatura</th>
-        <th class="border px-4 py-2">Fecha y Hora</th>
-      </tr>
-    </thead>
-    <tbody id="tbodySensores">
-      <!-- Aquí se insertan filas desde JS -->
-    </tbody>
-  </table>
-</div>
-
-<h2 class="text-xl font-bold mt-8 mb-4 text-center">Estado del Sistema</h2>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-  <div class="bg-white p-4 rounded shadow">
-    <div class="text-sm text-gray-500">Voltaje Panel</div>
-    <div class="text-xl" id="voltajePanel">-- V</div>
-  </div>
-  <div class="bg-white p-4 rounded shadow">
-    <div class="text-sm text-gray-500">Voltaje Batería</div>
-    <div class="text-xl" id="voltajeBateria">-- V</div>
-  </div>
-  <div class="bg-white p-4 rounded shadow">
-    <div class="text-sm text-gray-500">% Batería</div>
-    <div class="text-xl" id="porcentajeBateria">--%</div>
-  </div>
-  <div class="bg-white p-4 rounded shadow">
-    <div class="text-sm text-gray-500">% Panel Solar</div>
-    <div class="text-xl" id="porcentajePanel">--%</div>
-  </div>
-</div>
 
   <!-- <section id="resumenPanel" class="p-6">
     <div id="resumenContainer" class="space-y-6"></div>
@@ -101,6 +64,44 @@
     </div>
   </main>
 
+  <!-- Panel: Resumen de Sensores -->
+    <div id="resumenPanel" class="hidden p-4">
+      <h2 class="text-xl font-bold mb-4 text-center">Resumen de Sensores</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white shadow-md rounded">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border px-4 py-2">Sensor</th>
+              <th class="border px-4 py-2">Valor</th>
+              <th class="border px-4 py-2">Fecha y Hora</th>
+            </tr>
+          </thead>
+          <tbody id="tbodySensores">
+            <!-- Aquí se insertarán las filas dinámicamente desde main.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="text-xl font-bold mt-8 mb-4 text-center">Estado del Sistema</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="bg-white p-4 rounded shadow">
+          <div class="text-sm text-gray-500">Voltaje Panel</div>
+         <div class="text-xl" id="voltajePanel">-- V</div>
+       </div>
+       <div class="bg-white p-4 rounded shadow">
+         <div class="text-sm text-gray-500">Voltaje Batería</div>
+          <div class="text-xl" id="voltajeBateria">-- V</div>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+         <div class="text-sm text-gray-500">% Batería</div>
+         <div class="text-xl" id="porcentajeBateria">--%</div>
+       </div>
+       <div class="bg-white p-4 rounded shadow">
+         <div class="text-sm text-gray-500">% Panel Solar</div>
+         <div class="text-xl" id="porcentajePanel">--%</div>
+       </div>
+     </div>
+    </div>
   <!-- Panel Comparativa -->
   <section id="historyPanel" class="p-6 hidden">
     <h2 class="text-xl font-semibold text-center mb-4">Comparativa de Sensores</h2>
